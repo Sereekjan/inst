@@ -17,7 +17,10 @@ public class MainActivity extends AppCompatActivity {
     private MapView mapView;
     private MapboxMap map;
 
+
+    private String test;
     /*
+    * test
     * test
     * test
     * test
