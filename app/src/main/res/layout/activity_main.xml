@@ -20,12 +20,52 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
-            <include layout="@layout/app_bar_layout"/>
+            <!--include layout="@layout/app_bar_layout"/-->
 
-            <com.mapbox.mapboxsdk.maps.MapView
-                android:id="@+id/mapView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/recyclerview_search_result"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingTop="64dp"
+                        android:elevation="2dp"
+                        android:background="#FFFFFF"
+                        android:visibility="gone"/>
+                    <View
+                        android:id="@+id/view_search_tint"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:elevation="2dp"
+                        android:visibility="gone"
+                        android:background="#88000000"
+                        android:alpha="0.0"
+                        android:layerType="hardware"/>
+
+                    <org.cryse.widget.persistentsearch.PersistentSearchView
+                        android:id="@+id/searchview"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:elevation="4dp"
+                        app:persistentSV_logoString="@string/string_logo"
+                        app:persistentSV_searchTextColor="?android:textColorPrimary"
+                        app:persistentSV_editTextColor="?android:textColorPrimary"
+                        app:persistentSV_editHintText="Search"
+                        app:persistentSV_editHintTextColor="?android:textColorHint"
+                        app:persistentSV_displayMode="toolbar"
+                        app:persistentSV_homeButtonMode="burger"
+                        app:persistentSV_searchCardElevation="2dp"
+                        app:persistentSV_customToolbarHeight="64dp"/>
+
+                    <com.mapbox.mapboxsdk.maps.MapView
+                        android:id="@+id/mapView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                </RelativeLayout>
             </LinearLayout>
         </FrameLayout>
 

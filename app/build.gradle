@@ -21,6 +21,12 @@ android {
 
 repositories {
     mavenCentral()
+    maven {
+        url 'https://maven.google.com'
+    }
+    maven {
+        url "https://jitpack.io"
+    }
 }
 
 dependencies {
@@ -29,4 +35,6 @@ dependencies {
     compile ('com.mapbox.mapboxsdk:mapbox-android-sdk:5.0.2@aar'){
         transitive=true
     }
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.github.crysehillmes:PersistentSearchView:4da778cd90'
 }
