@@ -1,7 +1,12 @@
 package kz.ikar.openstrmap;
 
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
@@ -12,11 +17,14 @@ import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
 
     private MapView mapView;
     private MapboxMap map;
 
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
         Mapbox.getInstance(this, getString(R.string.access_token));
 
         setContentView(R.layout.activity_main);
+
+
 
         mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
@@ -36,6 +46,39 @@ public class MainActivity extends AppCompatActivity {
                 loadFakeMarkers();
             }
         });
+
+        drawerLayout=(DrawerLayout) findViewById(R.id.drawer_layout);
+
+        initNav();
+    }
+
+    private void initNav(){
+        drawerLayout=(DrawerLayout) findViewById(R.id.drawer_layout);
+        navigationView=(NavigationView) findViewById(R.id.nav_menu);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.item1:
+                        drawerLayout.closeDrawers();
+                        break;
+                    case R.id.item2:
+                        break;
+                    case R.id.item3:
+                        break;
+                    case R.id.sub_item1:
+                        break;
+                    case R.id.sub_item2:
+                        break;
+                }
+                return false;
+            }
+        });
+
+        toolbar=(Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
     }
 
     private void loadFakeMarkers() {
@@ -108,4 +151,5 @@ public class MainActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         mapView.onSaveInstanceState(outState);
     }
+
 }

@@ -3,14 +3,23 @@
     <group android:checkableBehavior="single"
         >
         <item
+            android:id="@+id/item1"
             android:title="item1"/>
         <item
+            android:id="@+id/item2"
             android:title="item2"/>
+        <item
+            android:id="@+id/item3"
+            android:title="item3"/>
     </group>
     <item android:title="asdfr">
         <menu>
-            <item android:title="subItem1"/>
-            <item android:title="subItem2"/>
+            <item
+                android:id="@+id/sub_item1"
+                android:title="subItem1"/>
+            <item
+                android:id="@+id/sub_item2"
+                android:title="subItem2"/>
         </menu>
     </item>
 </menu>
