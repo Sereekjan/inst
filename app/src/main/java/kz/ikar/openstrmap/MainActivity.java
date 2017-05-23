@@ -33,8 +33,24 @@ public class MainActivity extends AppCompatActivity {
             public void onMapReady(MapboxMap mapboxMap) {
                 map = mapboxMap;
                 updateMap(43.242780, 76.940002, 10);
+                loadFakeMarkers();
             }
         });
+    }
+
+    private void loadFakeMarkers() {
+        map.addMarker(new MarkerOptions()
+                .position(new LatLng(43.198717, 76.876163))
+                .title("Средняя школа №45"));
+        map.addMarker(new MarkerOptions()
+                .position(new LatLng(43.197503, 76.884333))
+                .title("Лингвистическая гимназия №68"));
+        map.addMarker(new MarkerOptions()
+                .position(new LatLng(43.225806, 76.963596))
+                .title("Гимназия №30"));
+        map.addMarker(new MarkerOptions()
+                .position(new LatLng(43.249756, 76.858164))
+                .title("Гимназия №130"));
     }
 
     private void updateMap(double latitude, double longitude, int zoom) {
