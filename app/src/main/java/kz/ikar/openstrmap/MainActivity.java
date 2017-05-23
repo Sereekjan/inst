@@ -78,7 +78,6 @@ public class MainActivity extends AppCompatActivity{
         toolbar=(Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-
     }
 
     private void loadFakeMarkers() {
