@@ -17,6 +17,12 @@ public class MainActivity extends AppCompatActivity {
     private MapView mapView;
     private MapboxMap map;
 
+    /*
+    * test
+    * test
+    * test
+    * */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
