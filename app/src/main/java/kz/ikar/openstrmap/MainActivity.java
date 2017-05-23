@@ -18,14 +18,6 @@ public class MainActivity extends AppCompatActivity {
     private MapboxMap map;
 
 
-    private String test;
-    /*
-    * test
-    * test
-    * test
-    * test
-    * */
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
