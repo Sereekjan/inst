@@ -60,6 +60,39 @@
                         app:persistentSV_searchCardElevation="2dp"
                         app:persistentSV_customToolbarHeight="64dp"/>
 
+                    <android.support.v7.widget.CardView
+                        android:id="@+id/cardview_top"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/searchview"
+                        android:layout_marginRight="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginLeft="8dp">
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <TextView
+                                android:id="@+id/textview_top"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Топ 5 учебных заведений"
+                                android:textSize="18sp"
+                                android:gravity="center"
+                                android:padding="8dp"
+                                android:background="?attr/selectableItemBackgroundBorderless"
+                                android:clickable="true"/>
+
+                            <android.support.v7.widget.RecyclerView
+                                android:id="@+id/recyclerview_top"
+                                android:layout_below="@id/textview_top"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:background="?android:attr/selectableItemBackground"/>
+                        </RelativeLayout>
+                    </android.support.v7.widget.CardView>
+
                     <com.mapbox.mapboxsdk.maps.MapView
                         android:id="@+id/mapView"
                         android:layout_width="match_parent"
