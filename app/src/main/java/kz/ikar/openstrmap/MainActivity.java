@@ -11,6 +11,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -45,7 +46,6 @@ public class MainActivity extends AppCompatActivity{
 
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
-    private Toolbar toolbar;
 
     private PersistentSearchView searchView;
     private SearchResultAdapter searchAdapter;
@@ -111,7 +111,8 @@ public class MainActivity extends AppCompatActivity{
         searchView.setHomeButtonListener(new PersistentSearchView.HomeButtonListener() {
             @Override
             public void onHomeButtonClick() {
-                Toast.makeText(MainActivity.this, "Menu click", Toast.LENGTH_LONG).show();
+                drawerLayout.openDrawer(Gravity.LEFT);
+                //Toast.makeText(MainActivity.this, "Menu click", Toast.LENGTH_LONG).show();
             }
         });
         searchTintView.setOnClickListener(new View.OnClickListener() {
@@ -253,9 +254,6 @@ public class MainActivity extends AppCompatActivity{
             }
         });
 
-        //toolbar=(Toolbar) findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
-        //getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
     private void loadFakeMarkers() {

@@ -1,25 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <group android:checkableBehavior="single"
-        >
+    <group android:checkableBehavior="single">
         <item
             android:id="@+id/item1"
-            android:title="item1"/>
+            android:icon="@drawable/ic_kindergarten"
+            android:title="@string/kindergarten" />
         <item
             android:id="@+id/item2"
-            android:title="item2"/>
+            android:icon="@drawable/ic_school"
+            android:title="@string/school" />
         <item
             android:id="@+id/item3"
-            android:title="item3"/>
+            android:icon="@drawable/ic_college"
+            android:title="@string/college" />
     </group>
     <item android:title="asdfr">
         <menu>
-            <item
-                android:id="@+id/sub_item1"
-                android:title="subItem1"/>
-            <item
-                android:id="@+id/sub_item2"
-                android:title="subItem2"/>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/sub_item1"
+                    android:title="subItem1" />
+                <item
+                    android:id="@+id/sub_item2"
+                    android:title="subItem2" />
+            </group>
         </menu>
     </item>
 </menu>
