@@ -2,6 +2,7 @@ package kz.ikar.openstrmap;
 
 import android.animation.Animator;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
@@ -10,9 +11,9 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.camera.CameraUpdate;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
@@ -35,7 +37,7 @@ import java.util.List;
 import kz.ikar.openstrmap.classes.Institute;
 import kz.ikar.openstrmap.search.SampleSuggestionsBuilder;
 import kz.ikar.openstrmap.search.SearchResult;
-import kz.ikar.openstrmap.search.SearchResultAdapter;
+import kz.ikar.openstrmap.search.SearchInstitutesAdapter;
 import kz.ikar.openstrmap.search.SimpleAnimationListener;
 import kz.ikar.openstrmap.search.TopInstitutesAdapter;
 
@@ -48,7 +50,7 @@ public class MainActivity extends AppCompatActivity{
     private NavigationView navigationView;
 
     private PersistentSearchView searchView;
-    private SearchResultAdapter searchAdapter;
+    private SearchInstitutesAdapter searchAdapter;
     private RecyclerView searchRecyclerView;
     private View searchTintView;
 
@@ -59,6 +61,7 @@ public class MainActivity extends AppCompatActivity{
     private TextView topTextView;
 
     private int recyclerViewHeight;
+    private List<Institute> institutes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +80,7 @@ public class MainActivity extends AppCompatActivity{
         topTextView = (TextView) findViewById(R.id.textview_top);
 
         recyclerViewHeight = topRecyclerView.getHeight();
+        institutes = Institute.getFakeInstitutes();
 
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(new OnMapReadyCallback() {
@@ -102,17 +106,16 @@ public class MainActivity extends AppCompatActivity{
         topRecyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
         topRecyclerView.setVisibility(View.GONE);
 
-        searchAdapter = new SearchResultAdapter(new ArrayList<SearchResult>());
+        searchAdapter = new SearchInstitutesAdapter(new ArrayList<Institute>());
         searchRecyclerView.setAdapter(searchAdapter);
 
-        topInstitutesAdapter = new TopInstitutesAdapter(Institute.getFakeInstitutes(), this);
+        topInstitutesAdapter = new TopInstitutesAdapter(institutes, this);
         topRecyclerView.setAdapter(topInstitutesAdapter);
 
         searchView.setHomeButtonListener(new PersistentSearchView.HomeButtonListener() {
             @Override
             public void onHomeButtonClick() {
                 drawerLayout.openDrawer(Gravity.LEFT);
-                //Toast.makeText(MainActivity.this, "Menu click", Toast.LENGTH_LONG).show();
             }
         });
         searchTintView.setOnClickListener(new View.OnClickListener() {
@@ -121,27 +124,32 @@ public class MainActivity extends AppCompatActivity{
                 searchView.cancelEditing();
             }
         });
-        searchView.setSuggestionBuilder(new SampleSuggestionsBuilder(this));
+        searchView.setSuggestionBuilder(new SampleSuggestionsBuilder(this, institutes));
         searchView.setSearchListener(new PersistentSearchView.SearchListener() {
             @Override
             public boolean onSuggestion(SearchItem searchItem) {
+                for (Institute inst : institutes) {
+                    if (searchItem.getTitle().equals(inst.getName())) {
+                        pickLocation(inst);
+                        onBackPressed();
+                        return false;
+                    }
+                }
                 return false;
             }
 
             @Override
             public void onSearchCleared() {
-
             }
 
             @Override
             public void onSearchTermChanged(String term) {
-
             }
 
             @Override
             public void onSearch(String query) {
                 searchRecyclerView.setVisibility(View.VISIBLE);
-                fillResultToRecyclerView(query);
+                //fillResultToRecyclerView(query);
             }
 
             @Override
@@ -153,6 +161,7 @@ public class MainActivity extends AppCompatActivity{
                         .setDuration(300)
                         .setListener(new SimpleAnimationListener())
                         .start();
+                topCardView.setVisibility(View.INVISIBLE);
             }
 
             @Override
@@ -182,6 +191,7 @@ public class MainActivity extends AppCompatActivity{
                 if(searchRecyclerView.getVisibility() == View.VISIBLE) {
                     searchRecyclerView.setVisibility(View.GONE);
                 }
+                topCardView.setVisibility(View.VISIBLE);
             }
         });
         topTextView.setOnClickListener(new View.OnClickListener() {
@@ -216,7 +226,7 @@ public class MainActivity extends AppCompatActivity{
             SearchResult result = new SearchResult(query, query + Integer.toString(i), "");
             newResults.add(result);
         }
-        searchAdapter.replaceWith(newResults);
+        searchAdapter.replaceWith(institutes);
     }
 
     @Override
@@ -272,6 +282,7 @@ public class MainActivity extends AppCompatActivity{
     }
 
     private void updateMap(double latitude, double longitude, String title, int duration, int zoom) {
+        map.resetNorth();
         map.addMarker(new MarkerOptions()
         .position(new LatLng(latitude, longitude))
         .title(title));

@@ -9,21 +9,32 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import kz.ikar.openstrmap.classes.Institute;
+
 /**
  * Created by User on 23.05.2017.
  */
 
 public class SampleSuggestionsBuilder implements SearchSuggestionsBuilder {
+    private List<Institute> mInstitutes = new ArrayList<>();
     private Context mContext;
     private List<SearchItem> mHistorySuggestions = new ArrayList<SearchItem>();;
 
-    public SampleSuggestionsBuilder(Context context) {
+    public SampleSuggestionsBuilder(Context context, List<Institute> institutes) {
         this.mContext = context;
+        this.mInstitutes = institutes;
         createHistorys();
     }
 
     private void createHistorys() {
-        SearchItem item1 = new SearchItem(
+        /*for (Institute inst : mInstitutes) {
+            SearchItem item = new SearchItem(
+                    inst.getName(),
+                    inst.getAddress(),
+                    SearchItem.TYPE_SEARCH_ITEM_HISTORY);
+            mHistorySuggestions.add(item);
+        }*/
+        /*SearchItem item1 = new SearchItem(
                 "Isaac Newton",
                 "Isaac Newton",
                 SearchItem.TYPE_SEARCH_ITEM_HISTORY
@@ -46,7 +57,7 @@ public class SampleSuggestionsBuilder implements SearchSuggestionsBuilder {
                 "Alan Mathison Turing",
                 SearchItem.TYPE_SEARCH_ITEM_HISTORY
         );
-        mHistorySuggestions.add(item4);
+        mHistorySuggestions.add(item4);*/
     }
 
     @Override
@@ -59,39 +70,21 @@ public class SampleSuggestionsBuilder implements SearchSuggestionsBuilder {
     @Override
     public Collection<SearchItem> buildSearchSuggestion(int maxCount, String query) {
         List<SearchItem> items = new ArrayList<SearchItem>();
-        if(query.startsWith("@")) {
-            SearchItem peopleSuggestion = new SearchItem(
-                    "Search People: " + query.substring(1),
-                    query,
-                    SearchItem.TYPE_SEARCH_ITEM_SUGGESTION
-            );
-            items.add(peopleSuggestion);
-        } else if(query.startsWith("#")) {
-            SearchItem toppicSuggestion = new SearchItem(
-                    "Search Topic: " + query.substring(1),
-                    query,
-                    SearchItem.TYPE_SEARCH_ITEM_SUGGESTION
-            );
-            items.add(toppicSuggestion);
-        } else {
-            SearchItem peopleSuggestion = new SearchItem(
-                    "Search People: " + query,
-                    "@" + query,
-                    SearchItem.TYPE_SEARCH_ITEM_SUGGESTION
-            );
-            items.add(peopleSuggestion);
-            SearchItem toppicSuggestion = new SearchItem(
-                    "Search Topic: " + query,
-                    "#" + query,
-                    SearchItem.TYPE_SEARCH_ITEM_SUGGESTION
-            );
-            items.add(toppicSuggestion);
+        if (!query.trim().equals("") || !query.isEmpty()) {
+            for (Institute item : mInstitutes) {
+                if (item.getName().toLowerCase().contains(query.toLowerCase())) {
+                    items.add(new SearchItem(
+                            item.getName(),
+                            item.getAddress(),
+                            SearchItem.TYPE_SEARCH_ITEM_SUGGESTION));
+                }
+            }
         }
-        for(SearchItem item : mHistorySuggestions) {
+        /*for(SearchItem item : mHistorySuggestions) {
             if(item.getValue().startsWith(query)) {
                 items.add(item);
             }
-        }
+        }*/
         return items;
     }
 }

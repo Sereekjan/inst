@@ -10,31 +10,34 @@ import android.widget.TextView;
 import java.util.Collection;
 import java.util.List;
 
+import kz.ikar.openstrmap.MainActivity;
 import kz.ikar.openstrmap.R;
+import kz.ikar.openstrmap.classes.Institute;
 
 /**
  * Created by User on 23.05.2017.
  */
 
-public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.SearchResultViewHolder> {
-    private List<SearchResult> mItemList;
+public class SearchInstitutesAdapter extends RecyclerView.Adapter<SearchInstitutesAdapter.InstitutesViewHolder> {
+    private List<Institute> mItemList;
 
-    public SearchResultAdapter(List<SearchResult> mItemList) {
+    public SearchInstitutesAdapter(List<Institute> mItemList) {
         this.mItemList = mItemList;
     }
 
     @Override
-    public SearchResultViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public InstitutesViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.layout_item_search_result, parent, false);
-        return new SearchResultViewHolder(v);
+        return new InstitutesViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(SearchResultViewHolder holder, int position) {
-        SearchResult result = mItemList.get(position);
-        holder.mTitleTextView.setText(result.getTitle());
-        holder.mDescriptionTextView.setText(result.getDescription());
+    public void onBindViewHolder(InstitutesViewHolder holder, final int position) {
+        final int p = position;
+        Institute result = mItemList.get(position);
+        holder.mTitleTextView.setText(result.getName());
+        holder.mDescriptionTextView.setText(result.getAddress());
     }
 
     @Override
@@ -42,29 +45,28 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         return mItemList.size();
     }
 
-    public static class SearchResultViewHolder extends RecyclerView.ViewHolder {
+    public static class InstitutesViewHolder extends RecyclerView.ViewHolder {
 
         private TextView mTitleTextView;
         private TextView mDescriptionTextView;
         private ImageView mIconImageView;
 
-        public SearchResultViewHolder(View itemView) {
+        public InstitutesViewHolder(View itemView) {
             super(itemView);
             mTitleTextView = (TextView) itemView.findViewById(R.id.textview_title);
             mDescriptionTextView = (TextView) itemView.findViewById(R.id.textview_description);
             mIconImageView = (ImageView) itemView.findViewById(R.id.imageview_icon);
-
         }
     }
 
 
-    public void addAll(Collection<SearchResult> items) {
+    public void addAll(Collection<Institute> items) {
         int currentItemCount = mItemList.size();
         mItemList.addAll(items);
         notifyItemRangeInserted(currentItemCount, items.size());
     }
 
-    public void addAll(int position, Collection<SearchResult> items) {
+    public void addAll(int position, Collection<Institute> items) {
         int currentItemCount = mItemList.size();
         if (position > currentItemCount)
             throw new IndexOutOfBoundsException();
@@ -73,7 +75,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         notifyItemRangeInserted(position, items.size());
     }
 
-    public void replaceWith(Collection<SearchResult> items) {
+    public void replaceWith(Collection<Institute> items) {
         replaceWith(items, false);
     }
 
@@ -84,7 +86,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
     }
 
 
-    public void replaceWith(Collection<SearchResult> items, boolean cleanToReplace) {
+    public void replaceWith(Collection<Institute> items, boolean cleanToReplace) {
         if (cleanToReplace) {
             clear();
             addAll(items);
