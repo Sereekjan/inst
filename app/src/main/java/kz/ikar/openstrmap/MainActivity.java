@@ -18,6 +18,12 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.ValueEventListener;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
@@ -34,7 +40,10 @@ import org.cryse.widget.persistentsearch.SearchItem;
 import java.util.ArrayList;
 import java.util.List;
 
+import kz.ikar.openstrmap.classes.Category;
 import kz.ikar.openstrmap.classes.Institute;
+import kz.ikar.openstrmap.classes.Point;
+import kz.ikar.openstrmap.classes.Type;
 import kz.ikar.openstrmap.search.SampleSuggestionsBuilder;
 import kz.ikar.openstrmap.search.SearchResult;
 import kz.ikar.openstrmap.search.SearchInstitutesAdapter;
@@ -241,6 +250,42 @@ public class MainActivity extends AppCompatActivity{
         }
     }
 
+    private void saveToFirebase(){
+        FirebaseDatabase database=FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference=database.getReference("Institutes");
+        for(int i=0;i<10;i++){
+            Point point=new Point(i,i);
+            Type type=new Type(i,"type"+i);
+            Category category=new Category(i,"category"+i);
+            Institute institute=new Institute(i,"name"+i,"address"+i,"phone"+i,point,"head"+i,type,category,true);
+            databaseReference.child("intitute"+i).setValue(institute);
+        }
+    }
+
+    private void saveCommentToFirebase(){
+
+    }
+
+    private void loadFromFirebase(){
+        FirebaseDatabase database=FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference=database.getReference("Institutes");
+        final GenericTypeIndicator<List<Institute>> genericTypeIndicator=new GenericTypeIndicator<List<Institute>>() {};
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<Institute> list=new ArrayList<Institute>();
+                for (DataSnapshot child:dataSnapshot.getChildren()){
+                    list.add(child.getValue(Institute.class));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     private void initNav(){
         drawerLayout=(DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView=(NavigationView) findViewById(R.id.nav_menu);
@@ -252,8 +297,10 @@ public class MainActivity extends AppCompatActivity{
                         drawerLayout.closeDrawers();
                         break;
                     case R.id.item2:
+                        loadFromFirebase();
                         break;
                     case R.id.item3:
+                        saveToFirebase();
                         break;
                     case R.id.sub_item1:
                         break;

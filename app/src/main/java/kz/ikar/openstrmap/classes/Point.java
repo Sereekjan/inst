@@ -1,5 +1,6 @@
 package kz.ikar.openstrmap.classes;
 
+
 /**
  * Created by User on 24.05.2017.
  */
@@ -7,6 +8,8 @@ package kz.ikar.openstrmap.classes;
 public class Point {
     private double latitude;
     private double longitude;
+
+    public Point(){};
 
     public Point(double latitude, double longitude) {
         this.latitude = latitude;

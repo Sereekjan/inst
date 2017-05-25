@@ -17,6 +17,8 @@ public class Institute {
     private Category category;
     private boolean isGov;
 
+    public Institute(){};
+
     public Institute(int id,
                      String name,
                      String address,
