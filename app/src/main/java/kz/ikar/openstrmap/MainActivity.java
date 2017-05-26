@@ -1,10 +1,13 @@
 package kz.ikar.openstrmap;
 
 import android.animation.Animator;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -15,6 +18,9 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +31,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdate;
@@ -68,8 +75,6 @@ public class MainActivity extends AppCompatActivity{
 
     private CardView topCardView;
     private TextView topTextView;
-
-    private int recyclerViewHeight;
     private List<Institute> institutes;
 
     @Override
@@ -88,7 +93,6 @@ public class MainActivity extends AppCompatActivity{
         topCardView = (CardView) findViewById(R.id.cardview_top);
         topTextView = (TextView) findViewById(R.id.textview_top);
 
-        recyclerViewHeight = topRecyclerView.getHeight();
         institutes = Institute.getFakeInstitutes();
 
         mapView.onCreate(savedInstanceState);
@@ -215,7 +219,6 @@ public class MainActivity extends AppCompatActivity{
         });
 
         drawerLayout=(DrawerLayout) findViewById(R.id.drawer_layout);
-
         initNav();
     }
 
@@ -305,6 +308,8 @@ public class MainActivity extends AppCompatActivity{
                     case R.id.sub_item1:
                         break;
                     case R.id.sub_item2:
+                        Intent intent = new Intent(MainActivity.this, AboutActivity.class);
+                        startActivity(intent);
                         break;
                 }
                 return false;

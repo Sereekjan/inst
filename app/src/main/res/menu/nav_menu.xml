@@ -14,15 +14,15 @@
             android:icon="@drawable/ic_college"
             android:title="@string/college" />
     </group>
-    <item android:title="asdfr">
+    <item android:title="По принадлежности">
         <menu>
             <group android:checkableBehavior="single">
                 <item
                     android:id="@+id/sub_item1"
-                    android:title="subItem1" />
+                    android:title="Государственные" />
                 <item
                     android:id="@+id/sub_item2"
-                    android:title="subItem2" />
+                    android:title="Частные" />
             </group>
         </menu>
     </item>
