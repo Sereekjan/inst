@@ -1,26 +1,23 @@
 package kz.ikar.openstrmap;
 
 import android.animation.Animator;
-import android.content.Intent;
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,7 +28,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import com.mapbox.mapboxsdk.Mapbox;
-import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdate;
@@ -47,6 +43,7 @@ import org.cryse.widget.persistentsearch.SearchItem;
 import java.util.ArrayList;
 import java.util.List;
 
+import kz.ikar.openstrmap.DB.DBHelper;
 import kz.ikar.openstrmap.classes.Category;
 import kz.ikar.openstrmap.classes.Institute;
 import kz.ikar.openstrmap.classes.Point;
@@ -75,6 +72,8 @@ public class MainActivity extends AppCompatActivity{
 
     private CardView topCardView;
     private TextView topTextView;
+
+    private int recyclerViewHeight;
     private List<Institute> institutes;
 
     @Override
@@ -93,6 +92,7 @@ public class MainActivity extends AppCompatActivity{
         topCardView = (CardView) findViewById(R.id.cardview_top);
         topTextView = (TextView) findViewById(R.id.textview_top);
 
+        recyclerViewHeight = topRecyclerView.getHeight();
         institutes = Institute.getFakeInstitutes();
 
         mapView.onCreate(savedInstanceState);
@@ -219,6 +219,7 @@ public class MainActivity extends AppCompatActivity{
         });
 
         drawerLayout=(DrawerLayout) findViewById(R.id.drawer_layout);
+
         initNav();
     }
 
@@ -253,70 +254,6 @@ public class MainActivity extends AppCompatActivity{
         }
     }
 
-    private void saveToFirebase(){
-        FirebaseDatabase database=FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference=database.getReference("Institutes");
-        for(int i=0;i<10;i++){
-            Point point=new Point(i,i);
-            Type type=new Type(i,"type"+i);
-            Category category=new Category(i,"category"+i);
-            Institute institute=new Institute(i,"name"+i,"address"+i,"phone"+i,point,"head"+i,type,category,true);
-            databaseReference.child("intitute"+i).setValue(institute);
-        }
-    }
-
-    private void saveCommentToFirebase(){
-
-    }
-
-    private void loadFromFirebase(){
-        FirebaseDatabase database=FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference=database.getReference("Institutes");
-        final GenericTypeIndicator<List<Institute>> genericTypeIndicator=new GenericTypeIndicator<List<Institute>>() {};
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                List<Institute> list=new ArrayList<Institute>();
-                for (DataSnapshot child:dataSnapshot.getChildren()){
-                    list.add(child.getValue(Institute.class));
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    private void initNav(){
-        drawerLayout=(DrawerLayout) findViewById(R.id.drawer_layout);
-        navigationView=(NavigationView) findViewById(R.id.nav_menu);
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()){
-                    case R.id.item1:
-                        drawerLayout.closeDrawers();
-                        break;
-                    case R.id.item2:
-                        loadFromFirebase();
-                        break;
-                    case R.id.item3:
-                        saveToFirebase();
-                        break;
-                    case R.id.sub_item1:
-                        break;
-                    case R.id.sub_item2:
-                        Intent intent = new Intent(MainActivity.this, AboutActivity.class);
-                        startActivity(intent);
-                        break;
-                }
-                return false;
-            }
-        });
-
-    }
 
     private void loadFakeMarkers() {
         map.addMarker(new MarkerOptions()
@@ -388,6 +325,93 @@ public class MainActivity extends AppCompatActivity{
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         mapView.onSaveInstanceState(outState);
+    }
+
+
+
+
+    ///////////////////////////////////////////////////////////////
+    private void createDb(){
+        DBHelper dbHelper=new DBHelper(getApplicationContext());
+        SQLiteDatabase database=dbHelper.getWritableDatabase();
+
+        Log.e("DATABASE PATH",getApplicationContext().getDatabasePath("OpenStrMapDB.db").toString());
+    }
+
+    private void addCategories(){
+        DBHelper dbHelper=new DBHelper(this);
+        SQLiteDatabase database=dbHelper.getWritableDatabase();
+        ContentValues cv=new ContentValues();
+
+    }
+
+    private void saveToFirebase(){
+        FirebaseDatabase database=FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference=database.getReference("Institutes");
+        for(int i=0;i<10;i++){
+            Point point=new Point(i,i,i);
+            Type type=new Type(i,"type"+i);
+            Category category=new Category(i,"category"+i);
+            Institute institute=new Institute(i,"name"+i,"address"+i,"phone"+i,point,"head"+i,type,category,true);
+            databaseReference.child("intitute"+i).setValue(institute);
+        }
+    }
+
+    private void saveCommentToFirebase(){
+
+    }
+    private void recreateDb(){
+        //getApplicationContext().deleteDatabase(DBHelper.DATABASE_NAME);
+        createDb();
+    }
+
+    private void loadFromFirebase(){
+        FirebaseDatabase database=FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference=database.getReference("Institutes");
+        final GenericTypeIndicator<List<Institute>> genericTypeIndicator=new GenericTypeIndicator<List<Institute>>() {};
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<Institute> list=new ArrayList<Institute>();
+                for (DataSnapshot child:dataSnapshot.getChildren()){
+                    list.add(child.getValue(Institute.class));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void initNav(){
+
+        drawerLayout=(DrawerLayout) findViewById(R.id.drawer_layout);
+        navigationView=(NavigationView) findViewById(R.id.nav_menu);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.item1:
+                        drawerLayout.closeDrawers();
+                        break;
+                    case R.id.item2:
+                        loadFromFirebase();
+                        break;
+                    case R.id.item3:
+                        saveToFirebase();
+                        break;
+                    case R.id.sub_item1:
+                        break;
+                    case R.id.sub_item2:
+                        //recreateDb();
+                        break;
+                }
+                return false;
+            }
+        });
+
     }
 
 }

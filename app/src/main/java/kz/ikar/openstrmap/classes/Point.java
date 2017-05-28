@@ -6,14 +6,29 @@ package kz.ikar.openstrmap.classes;
  */
 
 public class Point {
+    private int id;
     private double latitude;
     private double longitude;
 
     public Point(){};
 
+    public Point(int id,double latitude, double longitude) {
+        this.id=id;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
     public Point(double latitude, double longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public double getLatitude() {
