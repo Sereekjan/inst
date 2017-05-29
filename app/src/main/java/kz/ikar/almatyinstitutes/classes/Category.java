@@ -1,4 +1,4 @@
-package kz.ikar.almatyinstitues.classes;
+package kz.ikar.almatyinstitutes.classes;
 
 /**
  * Created by User on 24.05.2017.

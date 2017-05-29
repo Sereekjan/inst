@@ -1,4 +1,4 @@
-package kz.ikar.almatyinstitues.search;
+package kz.ikar.almatyinstitutes.search;
 
 import android.content.Context;
 
@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import kz.ikar.almatyinstitues.classes.Institute;
+import kz.ikar.almatyinstitutes.classes.Institute;
 
 /**
  * Created by User on 23.05.2017.

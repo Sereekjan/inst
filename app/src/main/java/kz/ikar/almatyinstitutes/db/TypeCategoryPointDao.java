@@ -1,11 +1,11 @@
-package kz.ikar.almatyinstitues.db;
+package kz.ikar.almatyinstitutes.db;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import kz.ikar.almatyinstitues.classes.Category;
+import kz.ikar.almatyinstitutes.classes.Category;
 
 /**
  * Created by VH on 26.05.2017.

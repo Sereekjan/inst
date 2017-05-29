@@ -1,4 +1,4 @@
-package kz.ikar.almatyinstitues.db;
+package kz.ikar.almatyinstitutes.db;
 
 import android.content.ContentValues;
 import android.content.Context;

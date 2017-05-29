@@ -1,4 +1,4 @@
-package kz.ikar.almatyinstitues;
+package kz.ikar.almatyinstitutes;
 
 import android.animation.Animator;
 import android.content.ContentValues;
@@ -16,10 +16,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -42,16 +40,16 @@ import org.cryse.widget.persistentsearch.SearchItem;
 
 import java.util.ArrayList;
 import java.util.List;
-import kz.ikar.almatyinstitues.db.DBHelper;
-import kz.ikar.almatyinstitues.classes.Category;
-import kz.ikar.almatyinstitues.classes.Institute;
-import kz.ikar.almatyinstitues.classes.Point;
-import kz.ikar.almatyinstitues.classes.Type;
-import kz.ikar.almatyinstitues.search.SampleSuggestionsBuilder;
-import kz.ikar.almatyinstitues.search.SearchResult;
-import kz.ikar.almatyinstitues.search.SearchInstitutesAdapter;
-import kz.ikar.almatyinstitues.search.SimpleAnimationListener;
-import kz.ikar.almatyinstitues.search.TopInstitutesAdapter;
+import kz.ikar.almatyinstitutes.db.DBHelper;
+import kz.ikar.almatyinstitutes.classes.Category;
+import kz.ikar.almatyinstitutes.classes.Institute;
+import kz.ikar.almatyinstitutes.classes.Point;
+import kz.ikar.almatyinstitutes.classes.Type;
+import kz.ikar.almatyinstitutes.search.SampleSuggestionsBuilder;
+import kz.ikar.almatyinstitutes.search.SearchResult;
+import kz.ikar.almatyinstitutes.search.SearchInstitutesAdapter;
+import kz.ikar.almatyinstitutes.search.SimpleAnimationListener;
+import kz.ikar.almatyinstitutes.search.TopInstitutesAdapter;
 
 public class MainActivity extends AppCompatActivity{
 

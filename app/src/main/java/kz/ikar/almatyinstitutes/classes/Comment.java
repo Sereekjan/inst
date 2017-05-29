@@ -1,4 +1,4 @@
-package kz.ikar.almatyinstitues.classes;
+package kz.ikar.almatyinstitutes.classes;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -90,7 +90,7 @@ public class Comment {
                 result += " " + (Integer.parseInt(year)%100);
             }
         }
-        return result + " в " + time;
+        return result + time;
     }
 
     public void setTime(Date time) {

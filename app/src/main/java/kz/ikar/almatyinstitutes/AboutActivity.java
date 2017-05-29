@@ -1,4 +1,4 @@
-package kz.ikar.almatyinstitues;
+package kz.ikar.almatyinstitutes;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;

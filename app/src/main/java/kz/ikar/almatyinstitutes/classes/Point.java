@@ -1,4 +1,4 @@
-package kz.ikar.almatyinstitues.classes;
+package kz.ikar.almatyinstitutes.classes;
 
 
 /**

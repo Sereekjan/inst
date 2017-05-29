@@ -1,4 +1,4 @@
-package kz.ikar.almatyinstitues.tabs;
+package kz.ikar.almatyinstitutes.tabs;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,8 +8,8 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import kz.ikar.almatyinstitues.R;
-import kz.ikar.almatyinstitues.classes.Comment;
+import kz.ikar.almatyinstitutes.R;
+import kz.ikar.almatyinstitutes.classes.Comment;
 
 /**
  * Created by User on 26.05.2017.

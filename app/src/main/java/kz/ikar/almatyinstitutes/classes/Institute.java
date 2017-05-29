@@ -1,4 +1,4 @@
-package kz.ikar.almatyinstitues.classes;
+package kz.ikar.almatyinstitutes.classes;
 
 import java.util.ArrayList;
 import java.util.List;

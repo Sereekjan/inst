@@ -1,4 +1,4 @@
-package kz.ikar.almatyinstitues.search;
+package kz.ikar.almatyinstitutes.search;
 
 /**
  * Created by User on 23.05.2017.

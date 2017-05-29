@@ -1,4 +1,4 @@
-package kz.ikar.almatyinstitues.db;
+package kz.ikar.almatyinstitutes.db;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -9,10 +9,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-import kz.ikar.almatyinstitues.classes.Category;
-import kz.ikar.almatyinstitues.classes.Institute;
-import kz.ikar.almatyinstitues.classes.Point;
-import kz.ikar.almatyinstitues.classes.Type;
+import kz.ikar.almatyinstitutes.classes.Category;
+import kz.ikar.almatyinstitutes.classes.Institute;
+import kz.ikar.almatyinstitutes.classes.Point;
+import kz.ikar.almatyinstitutes.classes.Type;
 
 /**
  * Created by VH on 26.05.2017.

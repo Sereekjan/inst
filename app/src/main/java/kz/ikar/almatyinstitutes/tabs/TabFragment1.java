@@ -1,4 +1,4 @@
-package kz.ikar.almatyinstitues.tabs;
+package kz.ikar.almatyinstitutes.tabs;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -7,7 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import kz.ikar.almatyinstitues.R;
+import kz.ikar.almatyinstitutes.R;
 
 public class TabFragment1 extends Fragment {
     @Nullable

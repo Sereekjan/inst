@@ -1,4 +1,4 @@
-package kz.ikar.almatyinstitues.search;
+package kz.ikar.almatyinstitutes.search;
 
 import android.animation.Animator;
 

@@ -1,44 +1,41 @@
-package kz.ikar.almatyinstitues.search;
+package kz.ikar.almatyinstitutes.search;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.Collection;
 import java.util.List;
 
-import kz.ikar.almatyinstitues.MainActivity;
-import kz.ikar.almatyinstitues.R;
-import kz.ikar.almatyinstitues.classes.Institute;
+import kz.ikar.almatyinstitutes.MainActivity;
+import kz.ikar.almatyinstitutes.R;
+import kz.ikar.almatyinstitutes.classes.Institute;
 
 /**
- * Created by User on 23.05.2017.
+ * Created by User on 24.05.2017.
  */
 
-public class SearchInstitutesAdapter extends RecyclerView.Adapter<SearchInstitutesAdapter.InstitutesViewHolder> {
+public class TopInstitutesAdapter extends RecyclerView.Adapter<TopInstitutesAdapter.TopIntitutesViewHolder> {
     private List<Institute> mItemList;
     private static MainActivity activity;
 
-    public SearchInstitutesAdapter(List<Institute> mItemList, MainActivity activity) {
+    public TopInstitutesAdapter(List<Institute> mItemList, MainActivity activity) {
         this.mItemList = mItemList;
         this.activity = activity;
     }
 
     @Override
-    public InstitutesViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public TopIntitutesViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.layout_item_search_result, parent, false);
-        InstitutesViewHolder holder = new InstitutesViewHolder(v);
-        return holder;
+        .inflate(R.layout.layout_item_search_result, parent, false);
+        return new TopIntitutesViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(InstitutesViewHolder holder, final int position) {
+    public void onBindViewHolder(TopIntitutesViewHolder holder, int position) {
         final int p = position;
         Institute result = mItemList.get(position);
         holder.mTitleTextView.setText(result.getName());
@@ -48,7 +45,6 @@ public class SearchInstitutesAdapter extends RecyclerView.Adapter<SearchInstitut
             @Override
             public void onClick(View v) {
                 activity.pickLocation(mItemList.get(p));
-                activity.onBackPressed();
             }
         });
     }
@@ -58,13 +54,13 @@ public class SearchInstitutesAdapter extends RecyclerView.Adapter<SearchInstitut
         return mItemList.size();
     }
 
-    public static class InstitutesViewHolder extends RecyclerView.ViewHolder {
+    public static class TopIntitutesViewHolder extends RecyclerView.ViewHolder {
 
         private TextView mTitleTextView;
         private TextView mDescriptionTextView;
         private ImageView mIconImageView;
 
-        public InstitutesViewHolder(View itemView) {
+        public TopIntitutesViewHolder(View itemView) {
             super(itemView);
             mTitleTextView = (TextView) itemView.findViewById(R.id.textview_title);
             mDescriptionTextView = (TextView) itemView.findViewById(R.id.textview_description);
