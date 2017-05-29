@@ -1,6 +1,4 @@
-package kz.ikar.openstrmap.classes;
-
-import android.text.format.DateUtils;
+package kz.ikar.almatyinstitues.classes;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

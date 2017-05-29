@@ -1,4 +1,4 @@
-package kz.ikar.openstrmap.search;
+package kz.ikar.almatyinstitues.search;
 
 import android.content.Context;
 
@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import kz.ikar.openstrmap.classes.Institute;
+import kz.ikar.almatyinstitues.classes.Institute;
 
 /**
  * Created by User on 23.05.2017.

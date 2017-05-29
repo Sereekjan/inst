@@ -1,4 +1,4 @@
-package kz.ikar.openstrmap.DB;
+package kz.ikar.almatyinstitues.db;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -6,14 +6,13 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import java.nio.channels.Channel;
 import java.util.ArrayList;
 import java.util.List;
 
-import kz.ikar.openstrmap.classes.Category;
-import kz.ikar.openstrmap.classes.Institute;
-import kz.ikar.openstrmap.classes.Point;
-import kz.ikar.openstrmap.classes.Type;
+import kz.ikar.almatyinstitues.classes.Category;
+import kz.ikar.almatyinstitues.classes.Institute;
+import kz.ikar.almatyinstitues.classes.Point;
+import kz.ikar.almatyinstitues.classes.Type;
 
 /**
  * Created by VH on 26.05.2017.

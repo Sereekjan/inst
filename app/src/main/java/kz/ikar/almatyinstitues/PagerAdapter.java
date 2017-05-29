@@ -1,11 +1,11 @@
-package kz.ikar.openstrmap;
+package kz.ikar.almatyinstitues;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import kz.ikar.openstrmap.tabs.TabFragment1;
-import kz.ikar.openstrmap.tabs.TabFragment2;
+import kz.ikar.almatyinstitues.tabs.TabFragment1;
+import kz.ikar.almatyinstitues.tabs.TabFragment2;
 
 /**
  * Created by User on 26.05.2017.

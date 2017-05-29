@@ -1,16 +1,16 @@
-package kz.ikar.openstrmap.classes;
+package kz.ikar.almatyinstitues.classes;
 
 /**
  * Created by User on 24.05.2017.
  */
 
-public class Type {
+public class Category {
     private int id;
     private String name;
 
-    public Type(){};
+    public Category(){};
 
-    public Type(int id, String name) {
+    public Category(int id, String name) {
         this.id = id;
         this.name = name;
     }

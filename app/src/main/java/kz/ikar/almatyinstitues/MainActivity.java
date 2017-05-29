@@ -1,10 +1,10 @@
-package kz.ikar.openstrmap;
+package kz.ikar.almatyinstitues;
 
 import android.animation.Animator;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
@@ -28,9 +28,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
-import com.mapbox.mapboxsdk.camera.CameraUpdate;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
@@ -42,17 +42,16 @@ import org.cryse.widget.persistentsearch.SearchItem;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import kz.ikar.openstrmap.DB.DBHelper;
-import kz.ikar.openstrmap.classes.Category;
-import kz.ikar.openstrmap.classes.Institute;
-import kz.ikar.openstrmap.classes.Point;
-import kz.ikar.openstrmap.classes.Type;
-import kz.ikar.openstrmap.search.SampleSuggestionsBuilder;
-import kz.ikar.openstrmap.search.SearchResult;
-import kz.ikar.openstrmap.search.SearchInstitutesAdapter;
-import kz.ikar.openstrmap.search.SimpleAnimationListener;
-import kz.ikar.openstrmap.search.TopInstitutesAdapter;
+import kz.ikar.almatyinstitues.db.DBHelper;
+import kz.ikar.almatyinstitues.classes.Category;
+import kz.ikar.almatyinstitues.classes.Institute;
+import kz.ikar.almatyinstitues.classes.Point;
+import kz.ikar.almatyinstitues.classes.Type;
+import kz.ikar.almatyinstitues.search.SampleSuggestionsBuilder;
+import kz.ikar.almatyinstitues.search.SearchResult;
+import kz.ikar.almatyinstitues.search.SearchInstitutesAdapter;
+import kz.ikar.almatyinstitues.search.SimpleAnimationListener;
+import kz.ikar.almatyinstitues.search.TopInstitutesAdapter;
 
 public class MainActivity extends AppCompatActivity{
 
@@ -72,8 +71,6 @@ public class MainActivity extends AppCompatActivity{
 
     private CardView topCardView;
     private TextView topTextView;
-
-    private int recyclerViewHeight;
     private List<Institute> institutes;
 
     @Override
@@ -92,7 +89,6 @@ public class MainActivity extends AppCompatActivity{
         topCardView = (CardView) findViewById(R.id.cardview_top);
         topTextView = (TextView) findViewById(R.id.textview_top);
 
-        recyclerViewHeight = topRecyclerView.getHeight();
         institutes = Institute.getFakeInstitutes();
 
         mapView.onCreate(savedInstanceState);
@@ -101,6 +97,20 @@ public class MainActivity extends AppCompatActivity{
             public void onMapReady(MapboxMap mapboxMap) {
                 map = mapboxMap;
 
+                map.setOnInfoWindowClickListener(new MapboxMap.OnInfoWindowClickListener() {
+                    @Override
+                    public boolean onInfoWindowClick(@NonNull Marker marker) {
+                        for (Institute inst : Institute.getFakeInstitutes()) {
+                            if (inst.getName().equals(marker.getTitle())) {
+                                Intent intent = new Intent(MainActivity.this, AboutActivity.class);
+                                startActivity(intent);
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                });
+
                 CameraPosition cameraPosition = new CameraPosition.Builder()
                         .target(new LatLng(43.242780, 76.940002))
                         .zoom(10)
@@ -108,7 +118,11 @@ public class MainActivity extends AppCompatActivity{
                 map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition),
                         3000,
                         null);
-                loadFakeMarkers();
+                for (Institute inst : Institute.getFakeInstitutes()) {
+                    map.addMarker(new MarkerOptions()
+                            .position(new LatLng(inst.getPoint().getLatitude(), inst.getPoint().getLongitude()))
+                            .title(inst.getName()));
+                }
             }
         });
 
@@ -119,7 +133,7 @@ public class MainActivity extends AppCompatActivity{
         topRecyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
         topRecyclerView.setVisibility(View.GONE);
 
-        searchAdapter = new SearchInstitutesAdapter(new ArrayList<Institute>());
+        searchAdapter = new SearchInstitutesAdapter(new ArrayList<Institute>(), this);
         searchRecyclerView.setAdapter(searchAdapter);
 
         topInstitutesAdapter = new TopInstitutesAdapter(institutes, this);
@@ -162,7 +176,7 @@ public class MainActivity extends AppCompatActivity{
             @Override
             public void onSearch(String query) {
                 searchRecyclerView.setVisibility(View.VISIBLE);
-                //fillResultToRecyclerView(query);
+                fillResultToRecyclerView(query);
             }
 
             @Override
@@ -217,9 +231,7 @@ public class MainActivity extends AppCompatActivity{
                 }
             }
         });
-
         drawerLayout=(DrawerLayout) findViewById(R.id.drawer_layout);
-
         initNav();
     }
 

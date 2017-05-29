@@ -39,4 +39,4 @@ dependencies {
     compile 'com.github.crysehillmes:PersistentSearchView:4da778cd90'
     compile 'com.google.firebase:firebase-database:10.2.0'
 }
-apply plugin: 'com.google.gms.google-services'
+//apply plugin: 'com.google.gms.google-services'

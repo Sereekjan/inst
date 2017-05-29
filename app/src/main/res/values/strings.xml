@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">OpenStrMap</string>
+    <string name="app_name">Institutes</string>
     <string name="access_token">pk.eyJ1Ijoic2VyZWVramFuIiwiYSI6ImNqMzA5ZmFrZTAwMjEzM24wMHdmcjl2ZG0ifQ.jz5JESPtOdWkjYX5lzY1UQ</string>
     <string name="string_logo">Поиск</string>
     <string name="kindergarten">Детские сады</string>

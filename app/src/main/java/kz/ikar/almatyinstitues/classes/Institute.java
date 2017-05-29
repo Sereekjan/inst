@@ -1,4 +1,4 @@
-package kz.ikar.openstrmap.classes;
+package kz.ikar.almatyinstitues.classes;
 
 import java.util.ArrayList;
 import java.util.List;

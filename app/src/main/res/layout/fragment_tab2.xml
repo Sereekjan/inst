@@ -2,14 +2,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="kz.ikar.openstrmap.tabs.TabFragment2">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="kz.ikar.almatyinstitues.tabs.TabFragment2">
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/recyclerview_comments"
-        android:clickable="true"
-        android:focusable="true"
-        android:background="?android:attr/selectableItemBackground" />
+        android:id="@+id/recyclerview_comments" />
 
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/colorPrimary"
+        android:id="@+id/floationActBtn"
+        app:fabSize="normal"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        app:elevation="4dp"
+        app:borderWidth="0dp"
+        android:src="@drawable/ic_chat_bubble_white_24dp"/>
 </FrameLayout>

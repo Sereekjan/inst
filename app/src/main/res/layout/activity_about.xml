@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="kz.ikar.openstrmap.AboutActivity">
+    tools:context="kz.ikar.almatyinstitues.AboutActivity">
     <!--include layout="@layout/app_bar_layout"/-->
 
     <android.support.v7.widget.Toolbar

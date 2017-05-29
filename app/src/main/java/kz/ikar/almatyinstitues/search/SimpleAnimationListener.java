@@ -1,4 +1,4 @@
-package kz.ikar.openstrmap.search;
+package kz.ikar.almatyinstitues.search;
 
 import android.animation.Animator;
 

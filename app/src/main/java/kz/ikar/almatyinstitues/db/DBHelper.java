@@ -1,4 +1,4 @@
-package kz.ikar.openstrmap.DB;
+package kz.ikar.almatyinstitues.db;
 
 import android.content.ContentValues;
 import android.content.Context;

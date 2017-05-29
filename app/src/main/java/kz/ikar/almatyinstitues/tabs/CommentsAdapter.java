@@ -1,17 +1,15 @@
-package kz.ikar.openstrmap.tabs;
+package kz.ikar.almatyinstitues.tabs;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
 
-import kz.ikar.openstrmap.R;
-import kz.ikar.openstrmap.classes.Comment;
-import kz.ikar.openstrmap.classes.Institute;
+import kz.ikar.almatyinstitues.R;
+import kz.ikar.almatyinstitues.classes.Comment;
 
 /**
  * Created by User on 26.05.2017.

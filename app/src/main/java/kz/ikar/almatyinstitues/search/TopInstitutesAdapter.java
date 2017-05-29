@@ -1,17 +1,19 @@
-package kz.ikar.openstrmap.search;
+package kz.ikar.almatyinstitues.search;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Collection;
 import java.util.List;
 
-import kz.ikar.openstrmap.MainActivity;
-import kz.ikar.openstrmap.R;
-import kz.ikar.openstrmap.classes.Institute;
+import kz.ikar.almatyinstitues.MainActivity;
+import kz.ikar.almatyinstitues.R;
+import kz.ikar.almatyinstitues.classes.Institute;
 
 /**
  * Created by User on 24.05.2017.
@@ -39,7 +41,8 @@ public class TopInstitutesAdapter extends RecyclerView.Adapter<TopInstitutesAdap
         Institute result = mItemList.get(position);
         holder.mTitleTextView.setText(result.getName());
         holder.mDescriptionTextView.setText(result.getAddress());
-        holder.mTitleTextView.setOnClickListener(new View.OnClickListener() {
+        holder.mIconImageView.setImageResource(R.drawable.ic_school);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 activity.pickLocation(mItemList.get(p));
@@ -56,11 +59,13 @@ public class TopInstitutesAdapter extends RecyclerView.Adapter<TopInstitutesAdap
 
         private TextView mTitleTextView;
         private TextView mDescriptionTextView;
+        private ImageView mIconImageView;
 
         public TopIntitutesViewHolder(View itemView) {
             super(itemView);
             mTitleTextView = (TextView) itemView.findViewById(R.id.textview_title);
             mDescriptionTextView = (TextView) itemView.findViewById(R.id.textview_description);
+            mIconImageView = (ImageView) itemView.findViewById(R.id.imageview_icon);
         }
     }
 

@@ -1,7 +1,5 @@
-package kz.ikar.openstrmap.tabs;
+package kz.ikar.almatyinstitues.tabs;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -9,7 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import kz.ikar.openstrmap.R;
+import kz.ikar.almatyinstitues.R;
 
 public class TabFragment1 extends Fragment {
     @Nullable

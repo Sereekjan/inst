@@ -1,18 +1,20 @@
-package kz.ikar.openstrmap.search;
+package kz.ikar.almatyinstitues.search;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Collection;
 import java.util.List;
 
-import kz.ikar.openstrmap.MainActivity;
-import kz.ikar.openstrmap.R;
-import kz.ikar.openstrmap.classes.Institute;
+import kz.ikar.almatyinstitues.MainActivity;
+import kz.ikar.almatyinstitues.R;
+import kz.ikar.almatyinstitues.classes.Institute;
 
 /**
  * Created by User on 23.05.2017.
@@ -20,16 +22,19 @@ import kz.ikar.openstrmap.classes.Institute;
 
 public class SearchInstitutesAdapter extends RecyclerView.Adapter<SearchInstitutesAdapter.InstitutesViewHolder> {
     private List<Institute> mItemList;
+    private static MainActivity activity;
 
-    public SearchInstitutesAdapter(List<Institute> mItemList) {
+    public SearchInstitutesAdapter(List<Institute> mItemList, MainActivity activity) {
         this.mItemList = mItemList;
+        this.activity = activity;
     }
 
     @Override
     public InstitutesViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.layout_item_search_result, parent, false);
-        return new InstitutesViewHolder(v);
+        InstitutesViewHolder holder = new InstitutesViewHolder(v);
+        return holder;
     }
 
     @Override
@@ -38,6 +43,14 @@ public class SearchInstitutesAdapter extends RecyclerView.Adapter<SearchInstitut
         Institute result = mItemList.get(position);
         holder.mTitleTextView.setText(result.getName());
         holder.mDescriptionTextView.setText(result.getAddress());
+        holder.mIconImageView.setImageResource(R.drawable.ic_school);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                activity.pickLocation(mItemList.get(p));
+                activity.onBackPressed();
+            }
+        });
     }
 
     @Override

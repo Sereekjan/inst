@@ -1,4 +1,4 @@
-package kz.ikar.openstrmap;
+package kz.ikar.almatyinstitues;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
