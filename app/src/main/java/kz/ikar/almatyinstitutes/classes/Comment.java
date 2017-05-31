@@ -15,14 +15,14 @@ public class Comment {
     private int ball;
     private String content;
     private Date time;
-    private Institute institute;
+    //private Institute institute;
 
-    public Comment(int id, int ball, String content, Date time, Institute institute) {
+    public Comment(int id, int ball, String content, Date time/*, Institute institute*/) {
         this.id = id;
         this.ball = ball;
         this.content = content;
         this.time = time;
-        this.institute = institute;
+        //this.institute = institute;
     }
 
     public int getId() {
@@ -49,13 +49,13 @@ public class Comment {
         this.content = content;
     }
 
-    public Institute getInstitute() {
+    /*public Institute getInstitute() {
         return institute;
     }
 
     public void setInstitute(Institute institute) {
         this.institute = institute;
-    }
+    }*/
 
     public Date getTime() {
         return time;
@@ -95,28 +95,5 @@ public class Comment {
 
     public void setTime(Date time) {
         this.time = time;
-    }
-
-    public static List<Comment> getFakeComments() {
-        List<Comment> comments = new ArrayList<>();
-        comments.add(new Comment(1, 4, "Есть много вариантов Lorem Ipsum, но большинство из них " +
-                "имеет не всегда приемлемые модификации, например, юмористические вставки или " +
-                "слова, которые даже отдалённо не напоминают латынь. Если вам нужен Lorem Ipsum " +
-                "для серьёзного проекта, вы наверняка не хотите какой-нибудь шутки, скрытой в " +
-                "середине абзаца.", new Date(), Institute.getFakeInstitutes().get(0)));
-
-        comments.add(new Comment(2, 3, "Есть много вариантов Lorem Ipsum, но большинство из них " +
-                "имеет не всегда приемлемые модификации, например, юмористические вставки или " +
-                "слова, которые даже отдалённо не напоминают латынь. Если вам нужен Lorem Ipsum " +
-                "для серьёзного проекта, вы наверняка не хотите какой-нибудь шутки, скрытой в " +
-                "середине абзаца.", new Date(), Institute.getFakeInstitutes().get(0)));
-
-        comments.add(new Comment(3, 2, "Есть много вариантов Lorem Ipsum, но большинство из них " +
-                "имеет не всегда приемлемые модификации, например, юмористические вставки или " +
-                "слова, которые даже отдалённо не напоминают латынь. Если вам нужен Lorem Ipsum " +
-                "для серьёзного проекта, вы наверняка не хотите какой-нибудь шутки, скрытой в " +
-                "середине абзаца.", new Date(), Institute.getFakeInstitutes().get(0)));
-
-        return comments;
     }
 }

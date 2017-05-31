@@ -1,27 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/item1"
-            android:icon="@drawable/ic_kindergarten"
-            android:title="@string/kindergarten" />
-        <item
-            android:id="@+id/item2"
-            android:icon="@drawable/ic_school"
-            android:title="@string/school" />
-        <item
-            android:id="@+id/item3"
-            android:icon="@drawable/ic_college"
-            android:title="@string/college" />
-    </group>
+    <item android:title="По типу">
+        <menu>
+            <item
+                android:id="@+id/item1"
+                android:icon="@drawable/ic_kindergarten"
+                android:title="@string/kindergarten" />
+            <item
+                android:id="@+id/item2"
+                android:icon="@drawable/ic_school"
+                android:title="@string/school" />
+            <item
+                android:id="@+id/item3"
+                android:icon="@drawable/ic_college"
+                android:title="@string/college" />
+        </menu>
+    </item>
     <item android:title="По принадлежности">
         <menu>
             <group android:checkableBehavior="single">
                 <item
                     android:id="@+id/sub_item1"
+                    android:icon="@drawable/ic_gov"
                     android:title="Государственные" />
                 <item
                     android:id="@+id/sub_item2"
+                    android:icon="@drawable/ic_business"
                     android:title="Частные" />
             </group>
         </menu>

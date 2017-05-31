@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <style name="DialogStyle">
+    <style name="DialogStyle" parent="AlertDialog.AppCompat.Light">
         <item name="android:windowNoTitle">true</item>
         <item name="android:colorControlHighlight">@color/colorPrimary</item>
         <item name="android:colorControlNormal">#c5c5c5</item>

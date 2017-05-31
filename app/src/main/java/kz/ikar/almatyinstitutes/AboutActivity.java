@@ -8,7 +8,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import kz.ikar.almatyinstitutes.classes.Institute;
+
 public class AboutActivity extends AppCompatActivity {
+    public Institute institute;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +30,14 @@ public class AboutActivity extends AppCompatActivity {
         tabLayout.addTab(tabLayout.newTab().setText("Описание"));
         tabLayout.addTab(tabLayout.newTab().setText("Комментарии"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+
+        String instituteTitle = getIntent().getStringExtra("institute_title");
+        // TODO: Change data source
+        for (Institute inst : Institute.getFakeInstitutes()) {
+            if (instituteTitle.equals(inst.getName())) {
+                institute = inst;
+            }
+        }
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
         final PagerAdapter adapter = new PagerAdapter(

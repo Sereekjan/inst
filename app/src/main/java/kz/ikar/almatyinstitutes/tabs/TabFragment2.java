@@ -1,11 +1,16 @@
 package kz.ikar.almatyinstitutes.tabs;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.ColorFilter;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,10 +18,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import kz.ikar.almatyinstitutes.AboutActivity;
 import kz.ikar.almatyinstitutes.R;
 import kz.ikar.almatyinstitutes.classes.Comment;
+import kz.ikar.almatyinstitutes.classes.Institute;
 
 public class TabFragment2 extends Fragment {
 
@@ -25,6 +37,7 @@ public class TabFragment2 extends Fragment {
     LinearLayoutManager linearLayoutManager;
 
     FloatingActionButton floatingBtn;
+    TextView emptyView;
 
     @Nullable
     @Override
@@ -34,8 +47,16 @@ public class TabFragment2 extends Fragment {
 
         commentsRecyclerView = (RecyclerView) v.findViewById(R.id.recyclerview_comments);
         floatingBtn = (FloatingActionButton) v.findViewById(R.id.floationActBtn);
+        emptyView = (TextView) v.findViewById(R.id.emptyView);
 
-        commentsAdapter = new CommentsAdapter(Comment.getFakeComments());
+        Institute institute = ((AboutActivity)getActivity()).institute;
+
+        // TODO: Change data source
+        if (institute.getComments() != null) {
+            commentsAdapter = new CommentsAdapter(institute.getComments());
+        } else {
+            commentsAdapter = new CommentsAdapter(new ArrayList<Comment>());
+        }
         linearLayoutManager = new LinearLayoutManager(getActivity());
         commentsRecyclerView.setLayoutManager(linearLayoutManager);
         commentsRecyclerView.addItemDecoration(
@@ -43,38 +64,49 @@ public class TabFragment2 extends Fragment {
         );
         commentsRecyclerView.setAdapter(commentsAdapter);
 
+        if (commentsAdapter.getItemCount() == 0) {
+            commentsRecyclerView.setVisibility(View.GONE);
+            emptyView.setVisibility(View.VISIBLE);
+        } else {
+            commentsRecyclerView.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.GONE);
+        }
+
         floatingBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final View view = v;
-                //Snackbar.make(v, "Wow", Snackbar.LENGTH_SHORT).show();
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                //builder.setTitle("Комментарий");
-
-                final View viewInflated = LayoutInflater.from(getContext())
+                final AlertDialog dialog = new AlertDialog.Builder(getContext()).create();
+                View viewInflated = LayoutInflater.from(getContext())
                         .inflate(R.layout.dialog_comment,
                                 (ViewGroup)getView(),
                                 false);
 
+                int color = R.color.colorAccent;
                 final EditText input = (EditText) viewInflated.findViewById(R.id.input);
-                builder.setView(viewInflated);
+                input.getBackground().mutate().setColorFilter(
+                        ContextCompat.getColor(getContext(), R.color.colorPrimary),
+                        PorterDuff.Mode.SRC_ATOP
+                );
 
-                builder.setPositiveButton("Отправить", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        Snackbar.make(view, input.getText(), Snackbar.LENGTH_SHORT).show();
-                    }
-                });
-                builder.setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                        Snackbar.make(view, "Canceled", Snackbar.LENGTH_SHORT).show();
-                    }
-                });
-                builder.show();
+                ((Button) viewInflated.findViewById(R.id.button_cancel))
+                        .setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.cancel();
+                            }
+                        });
+                ((Button) viewInflated.findViewById(R.id.button_send))
+                        .setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Snackbar.make(view, input.getText(), Snackbar.LENGTH_SHORT).show();
+                                dialog.cancel();
+                            }
+                        });
+
+                dialog.setView(viewInflated);
+                dialog.show();
             }
         });
 

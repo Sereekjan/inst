@@ -101,6 +101,7 @@ public class MainActivity extends AppCompatActivity{
                         for (Institute inst : Institute.getFakeInstitutes()) {
                             if (inst.getName().equals(marker.getTitle())) {
                                 Intent intent = new Intent(MainActivity.this, AboutActivity.class);
+                                intent.putExtra("institute_title", marker.getTitle());
                                 startActivity(intent);
                                 return true;
                             }

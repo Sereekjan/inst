@@ -53,7 +53,7 @@
                         app:persistentSV_logoString="@string/string_logo"
                         app:persistentSV_searchTextColor="?android:textColorPrimary"
                         app:persistentSV_editTextColor="?android:textColorPrimary"
-                        app:persistentSV_editHintText="Search"
+                        app:persistentSV_editHintText="@string/string_logo"
                         app:persistentSV_editHintTextColor="?android:textColorHint"
                         app:persistentSV_displayMode="toolbar"
                         app:persistentSV_homeButtonMode="burger"
