@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -11,6 +12,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -29,6 +31,7 @@ import kz.ikar.almatyinstitutes.AboutActivity;
 import kz.ikar.almatyinstitutes.R;
 import kz.ikar.almatyinstitutes.classes.Comment;
 import kz.ikar.almatyinstitutes.classes.Institute;
+import me.zhanghai.android.materialratingbar.MaterialRatingBar;
 
 public class TabFragment2 extends Fragment {
 
@@ -88,6 +91,12 @@ public class TabFragment2 extends Fragment {
                         ContextCompat.getColor(getContext(), R.color.colorPrimary),
                         PorterDuff.Mode.SRC_ATOP
                 );
+                MaterialRatingBar ratebar = (MaterialRatingBar)
+                        viewInflated.findViewById(R.id.ratebar);
+
+                Drawable stars = ratebar.getProgressDrawable();
+                DrawableCompat.setTint(stars,
+                        ContextCompat.getColor(getContext(), R.color.colorPrimary));
 
                 ((Button) viewInflated.findViewById(R.id.button_cancel))
                         .setOnClickListener(new View.OnClickListener() {
