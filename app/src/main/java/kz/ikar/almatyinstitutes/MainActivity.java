@@ -115,11 +115,11 @@ public class MainActivity extends AppCompatActivity{
 
         //institutes = Institute.getFakeInstitutes();
 
-        /*if (!DBHelper.isExists()) {
+        if (!DBHelper.isExists()) {
             Snackbar.make(mapView, "Doesn't exist", Snackbar.LENGTH_SHORT).show();
         } else {
             Snackbar.make(mapView, "Exists", Snackbar.LENGTH_SHORT).show();
-        }*/
+        }
 
         this.savedInstanceState = savedInstanceState;
         mapView.onCreate(savedInstanceState);
