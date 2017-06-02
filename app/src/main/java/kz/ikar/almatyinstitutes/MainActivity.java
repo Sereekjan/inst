@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -32,6 +33,7 @@ import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.gson.Gson;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
@@ -74,7 +76,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import static java.lang.System.in;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
+    private Bundle savedInstanceState;
 
     private MapView mapView;
     private MapboxMap map;
@@ -94,7 +97,6 @@ public class MainActivity extends AppCompatActivity {
     private TextView topTextView;
     private List<Institute> institutes;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,8 +113,15 @@ public class MainActivity extends AppCompatActivity {
         topCardView = (CardView) findViewById(R.id.cardview_top);
         topTextView = (TextView) findViewById(R.id.textview_top);
 
-        institutes = Institute.getFakeInstitutes();
+        //institutes = Institute.getFakeInstitutes();
 
+        /*if (!DBHelper.isExists()) {
+            Snackbar.make(mapView, "Doesn't exist", Snackbar.LENGTH_SHORT).show();
+        } else {
+            Snackbar.make(mapView, "Exists", Snackbar.LENGTH_SHORT).show();
+        }*/
+
+        this.savedInstanceState = savedInstanceState;
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
@@ -122,15 +131,12 @@ public class MainActivity extends AppCompatActivity {
                 map.setOnInfoWindowClickListener(new MapboxMap.OnInfoWindowClickListener() {
                     @Override
                     public boolean onInfoWindowClick(@NonNull Marker marker) {
-                        for (Institute inst : Institute.getFakeInstitutes()) {
-                            if (inst.getName().equals(marker.getTitle())) {
-                                Intent intent = new Intent(MainActivity.this, AboutActivity.class);
-                                intent.putExtra("institute_title", marker.getTitle());
-                                startActivity(intent);
-                                return true;
-                            }
-                        }
-                        return false;
+                        Institute currentInstitute = getByName(marker.getTitle());
+                        Intent intent = new Intent(MainActivity.this, AboutActivity.class);
+                        Gson gson = new Gson();
+                        intent.putExtra("institute", gson.toJson(currentInstitute));
+                        startActivity(intent);
+                        return true;
                     }
                 });
 
@@ -148,7 +154,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
 
         searchRecyclerView.setItemAnimator(new DefaultItemAnimator());
         searchRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -262,6 +267,17 @@ public class MainActivity extends AppCompatActivity {
         //recreateDb();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        mapView.onCreate(savedInstanceState);
+        mapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(MapboxMap mapboxMap) {
+                map = mapboxMap;
+            }
+        });
+    }
 
     public void pickLocation(Institute inst) {
         map.clear();
@@ -273,13 +289,28 @@ public class MainActivity extends AppCompatActivity {
                 16);
     }
 
-    private void fillResultToRecyclerView(String query) {
-        List<SearchResult> newResults = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            SearchResult result = new SearchResult(query, query + Integer.toString(i), "");
-            newResults.add(result);
+    public void pickLocations(List<Institute> insts) {
+        map.clear();
+        map.resetNorth();
+        topRecyclerView.setVisibility(View.GONE);
+        for (Institute inst : insts) {
+            map.addMarker(new MarkerOptions()
+                    .position(new LatLng(inst.getPoint().getLatitude(),
+                            inst.getPoint().getLongitude()))
+                    .title(inst.getName()));
         }
-        searchAdapter.replaceWith(institutes);
+
+        CameraPosition cameraPosition = new CameraPosition.Builder()
+                .target(new LatLng(43.242780, 76.940002))
+                .zoom(10)
+                .build();
+        map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition),
+                3000,
+                null);
+    }
+
+    private void fillResultToRecyclerView(String query) {
+        searchAdapter.replaceWith(getDataFromLocalDb());
     }
 
     @Override
@@ -294,8 +325,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-    private void loadFakeMarkers() {
+    /*private void loadFakeMarkers() {
         map.addMarker(new MarkerOptions()
                 .position(new LatLng(43.198717, 76.876163))
                 .title("Средняя школа №45"));
@@ -308,7 +338,7 @@ public class MainActivity extends AppCompatActivity {
         map.addMarker(new MarkerOptions()
                 .position(new LatLng(43.249756, 76.858164))
                 .title("Гимназия №130"));
-    }
+    }*/
 
     private void updateMap(double latitude, double longitude, String title, int duration, int zoom) {
         map.resetNorth();
@@ -671,6 +701,14 @@ public class MainActivity extends AppCompatActivity {
         return inst;
     }
 
+    private Institute getByName(String name) {
+        InstituteDao instituteDao = new InstituteDao(getApplicationContext());
+        instituteDao.open();
+        Institute inst = instituteDao.getByName(name);
+        instituteDao.close();
+        return inst;
+    }
+
     private void initNav() {
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView = (NavigationView) findViewById(R.id.nav_menu);
@@ -680,18 +718,23 @@ public class MainActivity extends AppCompatActivity {
                 switch (item.getItemId()) {
                     case R.id.item1:
                         drawerLayout.closeDrawers();
+                        pickLocations(getByType(1));
                         break;
                     case R.id.item2:
                         drawerLayout.closeDrawers();
+                        pickLocations(getByType(2));
                         break;
                     case R.id.item3:
                         drawerLayout.closeDrawers();
+                        pickLocations(getByType(3));
                         break;
                     case R.id.sub_item1:
                         drawerLayout.closeDrawers();
+                        pickLocations(getByGov(true));
                         break;
                     case R.id.sub_item2:
                         drawerLayout.closeDrawers();
+                        pickLocations(getByGov(false));
                         break;
                 }
                 return false;

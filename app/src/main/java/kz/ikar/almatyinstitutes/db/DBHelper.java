@@ -3,6 +3,7 @@ package kz.ikar.almatyinstitutes.db;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
 /**
@@ -103,5 +104,17 @@ public class DBHelper extends SQLiteOpenHelper {
         ContentValues cv=new ContentValues();
         cv.put(COLUMN_TYPE_NAME,value);
         db.insert(TABLE_TYPE,null,cv);
+    }
+
+    public static boolean isExists() {
+        SQLiteDatabase checkDB = null;
+        try {
+            checkDB = SQLiteDatabase.openDatabase(DATABASE_NAME, null,
+                    SQLiteDatabase.OPEN_READONLY);
+            checkDB.close();
+        } catch (SQLiteException e) {
+            // database doesn't exist yet.
+        }
+        return checkDB != null;
     }
 }

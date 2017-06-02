@@ -39,12 +39,11 @@ public class TabFragment1 extends Fragment {
         textViewHead.setText(institute.getHead());
         textViewAddress.setText(institute.getAddress());
         textViewContacts.setText(institute.getPhone());
-        if (institute.getAvgRating() < 0) {
+        if (institute.getAvgRating() < 0f) {
             textViewRating.setText("-");
         } else {
             textViewRating.setText(String.valueOf(institute.getAvgRating()));
         }
-        textViewRating.setText(String.valueOf(institute.getAvgRating()));
 
         return view;
     }
