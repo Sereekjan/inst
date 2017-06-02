@@ -1,5 +1,8 @@
 package kz.ikar.almatyinstitutes.classes;
 
+import com.mapbox.mapboxsdk.annotations.BaseMarkerOptions;
+import com.mapbox.mapboxsdk.annotations.MarkerOptions;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,7 +22,7 @@ public class Institute {
     private boolean isGov;
     private List<Comment> comments;
 
-    public Institute(){};
+    public Institute(){}
 
     public Institute(int id,
                      String name,

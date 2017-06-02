@@ -17,6 +17,7 @@ public class Comment {
     private Date time;
     //private Institute institute;
 
+    public Comment() {}
     public Comment(int id, int ball, String content, Date time/*, Institute institute*/) {
         this.id = id;
         this.ball = ball;

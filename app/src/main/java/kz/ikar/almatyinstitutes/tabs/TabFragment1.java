@@ -35,7 +35,11 @@ public class TabFragment1 extends Fragment {
 
         Institute institute = ((AboutActivity)getActivity()).institute;
         textViewTitle.setText(institute.getName());
-        //textViewIsGov.setText(institute.getIsGov());
+        if (institute.isGov()) {
+            textViewIsGov.setText("Государственное учреждение");
+        } else {
+            textViewIsGov.setText("Частное учреждение");
+        }
         textViewHead.setText(institute.getHead());
         textViewAddress.setText(institute.getAddress());
         textViewContacts.setText(institute.getPhone());

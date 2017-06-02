@@ -97,6 +97,9 @@ public class MainActivity extends AppCompatActivity{
     private TextView topTextView;
     private List<Institute> institutes;
 
+    private double defLat = 43.271780;
+    private double defLng = 76.915002;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -133,12 +136,14 @@ public class MainActivity extends AppCompatActivity{
                 });
 
                 CameraPosition cameraPosition = new CameraPosition.Builder()
-                        .target(new LatLng(43.242780, 76.940002))
+                        .target(new LatLng(defLat, defLng))
                         .zoom(10)
                         .build();
+
                 map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition),
                         3000,
                         null);
+
                 for (Institute inst : getDataFromLocalDb()) {
                     map.addMarker(new MarkerOptions()
                             .position(new LatLng(inst.getPoint().getLatitude(), inst.getPoint().getLongitude()))
@@ -172,11 +177,11 @@ public class MainActivity extends AppCompatActivity{
                 searchView.cancelEditing();
             }
         });
-        searchView.setSuggestionBuilder(new SampleSuggestionsBuilder(this, institutes));
+        searchView.setSuggestionBuilder(new SampleSuggestionsBuilder(this, getDataFromLocalDb()));
         searchView.setSearchListener(new PersistentSearchView.SearchListener() {
             @Override
             public boolean onSuggestion(SearchItem searchItem) {
-                for (Institute inst : institutes) {
+                for (Institute inst : getDataFromLocalDb()) {
                     if (searchItem.getTitle().equals(inst.getName())) {
                         pickLocation(inst);
                         onBackPressed();
@@ -256,7 +261,7 @@ public class MainActivity extends AppCompatActivity{
         initNav();
         FirebaseApp.initializeApp(this);
 
-        //recreateDb();
+        recreateDb();
     }
 
     @Override
@@ -293,7 +298,7 @@ public class MainActivity extends AppCompatActivity{
         }
 
         CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(new LatLng(43.242780, 76.940002))
+                .target(new LatLng(defLat, defLng))
                 .zoom(10)
                 .build();
         map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition),
@@ -302,7 +307,7 @@ public class MainActivity extends AppCompatActivity{
     }
 
     private void fillResultToRecyclerView(String query) {
-        searchAdapter.replaceWith(getDataFromLocalDb());
+        searchAdapter.replaceWith(getListByName(query));
     }
 
     @Override
@@ -698,6 +703,16 @@ public class MainActivity extends AppCompatActivity{
         instituteDao.open();
         Institute inst = instituteDao.getByName(name);
         instituteDao.close();
+        return inst;
+    }
+
+    private List<Institute> getListByName(String name) {
+        List<Institute> inst = new ArrayList<>();
+        InstituteDao instituteDao=new InstituteDao(getApplicationContext());
+        instituteDao.open();
+        inst = instituteDao.getListByName(name);
+        instituteDao.close();
+        print(inst);
         return inst;
     }
 

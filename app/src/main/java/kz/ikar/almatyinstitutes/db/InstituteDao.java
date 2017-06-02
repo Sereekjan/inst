@@ -177,4 +177,26 @@ public class InstituteDao {
         }
         return institute;
     }
+
+    public List<Institute> getListByName(String name) {
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + DBHelper.TABLE_INSTITUTE +
+                " WHERE LOWER(name) like ?", new String[]{ "%" + name.toLowerCase() + "%" });
+        List<Institute> institutes = new ArrayList<>();
+        if (cursor.getCount() > 0) {
+            while (cursor.moveToNext()) {
+                cursor.moveToNext();
+                Institute institute = new Institute(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_INSTITUTE_ID)),
+                        cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_INSTITUTE_NAME)),
+                        cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_INSTITUTE_ADDRESS)),
+                        cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_INSTITUTE_PHONE)),
+                        getPoint(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_INSTITUTE_POINT))),
+                        cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_INSTITUTE_HEAD)),
+                        getType(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_INSTITUTE_TYPE))),
+                        null,
+                        isGov(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_INSTITUTE_ISGOV))));
+                institutes.add(institute);
+            }
+        }
+        return institutes;
+    }
 }
