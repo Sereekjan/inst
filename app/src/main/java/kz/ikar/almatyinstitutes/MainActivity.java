@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //recreateDb();
+        recreateDb();
         Mapbox.getInstance(this, getString(R.string.access_token));
 
         setContentView(R.layout.activity_main);
@@ -446,6 +446,7 @@ public class MainActivity extends AppCompatActivity{
 
     private void addToDb(List<Institute> instituteList) {
         for (Institute in : instituteList) {
+            in.setComments(null);
             if (in.getPoint() != null) {
                 addPointToDb(in.getPoint());
                 addIntituteToDb(in);

@@ -94,7 +94,7 @@ public class TabFragment2 extends Fragment {
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     Institute inst = ds.getValue(Institute.class);
                     if (inst.getAddress().equals(address)) {
-                        List<Comment> comments=inst.getComments();
+                        //List<Comment> comments=inst.getComments();
                         break;
                     }
                 }
