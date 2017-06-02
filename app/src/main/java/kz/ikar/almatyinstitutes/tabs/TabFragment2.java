@@ -14,6 +14,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -43,7 +44,7 @@ import kz.ikar.almatyinstitutes.classes.Comment;
 import kz.ikar.almatyinstitutes.classes.Institute;
 import me.zhanghai.android.materialratingbar.MaterialRatingBar;
 
-public class TabFragment2 extends Fragment {
+public class TabFragment2 extends Fragment{
 
     RecyclerView commentsRecyclerView;
     CommentsAdapter commentsAdapter;
@@ -51,6 +52,7 @@ public class TabFragment2 extends Fragment {
 
     FloatingActionButton floatingBtn;
     TextView emptyView;
+
 
     private void addCommentToFirebase(String key, int in,String comStr,int ball) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -81,28 +83,6 @@ public class TabFragment2 extends Fragment {
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
-
-            }
-        });
-    }
-
-    private void getInstituteComments(final String address) {
-        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-        Query query = reference.child("Institutes");
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    Institute inst = ds.getValue(Institute.class);
-                    if (inst.getAddress().equals(address)) {
-                        //List<Comment> comments=inst.getComments();
-                        break;
-                    }
-                }
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
             }
         });
     }
@@ -119,15 +99,16 @@ public class TabFragment2 extends Fragment {
         emptyView = (TextView) v.findViewById(R.id.emptyView);
 
         final Institute institute = ((AboutActivity)getActivity()).institute;
-
+        List<Comment> comments=((AboutActivity)getActivity()).commentList;
         // TODO: Change data source
         if (institute.getComments() != null) {
             commentsAdapter = new CommentsAdapter(institute.getComments());
         } else {
-            commentsAdapter = new CommentsAdapter(new ArrayList<Comment>());
+            commentsAdapter = new CommentsAdapter(comments);
         }
         linearLayoutManager = new LinearLayoutManager(getActivity());
         commentsRecyclerView.setLayoutManager(linearLayoutManager);
+
         commentsRecyclerView.addItemDecoration(
                 new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL)
         );
@@ -188,6 +169,5 @@ public class TabFragment2 extends Fragment {
 
         return v;
     }
-
 
 }
