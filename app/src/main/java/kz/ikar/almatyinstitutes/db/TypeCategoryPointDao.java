@@ -45,14 +45,14 @@ public class TypeCategoryPointDao {
 
     public Category getCategoryById(int id) {
         Cursor cursor = sqLiteDatabase.query(DBHelper.TABLE_CATEGORY, categoryColumns,
-                DBHelper.COLUMN_CATEGORY_ID + "=?", new String[]{String.valueOf(id)}, null, null, null, null);
+                DBHelper.COLUMN_CATEGORY_ID + " = ?", new String[]{String.valueOf(id)}, null, null, null, null);
         Category category = new Category(Integer.parseInt(cursor.getString(0)), cursor.getString(1));
         return category;
     }
 
     public Type getTypeById(int id) {
         Cursor cursor = sqLiteDatabase.query(DBHelper.TABLE_TYPE, typeColums,
-                DBHelper.COLUMN_TYPE_ID + "=?", new String[]{String.valueOf(id)},
+                DBHelper.COLUMN_TYPE_ID + " = ?", new String[]{String.valueOf(id)},
                 null, null, null, null);
         if (cursor != null) {
             cursor.moveToFirst();
@@ -72,7 +72,7 @@ public class TypeCategoryPointDao {
 
     public Point getPointById(int id){
         Cursor cursor=sqLiteDatabase.query(DBHelper.TABLE_POINT,pointsColumns,
-                DBHelper.COLUMN_POINT_ID+"=?",new String[]{String.valueOf(id)},
+                DBHelper.COLUMN_POINT_ID+" = ?",new String[]{String.valueOf(id)},
                 null,null,null,null);
         if (cursor != null) {
             cursor.moveToFirst();

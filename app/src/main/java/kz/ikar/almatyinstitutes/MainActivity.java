@@ -259,9 +259,9 @@ public class MainActivity extends AppCompatActivity {
         initNav();
         FirebaseApp.initializeApp(this);
 
-        recreateDb();
-        loadFromFirebase();
+        //recreateDb();
     }
+
 
     public void pickLocation(Institute inst) {
         map.clear();
@@ -369,11 +369,17 @@ public class MainActivity extends AppCompatActivity {
 
 
     ///////////////////////////////////////////////////////////////
+    private void recreateDb() {
+        getApplicationContext().deleteDatabase(DBHelper.DATABASE_NAME);
+        createDb();
+
+    }
+
     private void createDb() {
         DBHelper dbHelper = new DBHelper(getApplicationContext());
         SQLiteDatabase database = dbHelper.getWritableDatabase();
-
-        Log.e("DATABASE PATH", getApplicationContext().getDatabasePath("OpenStrMapDB.db").toString());
+        Log.d("DATABASE PATH", getApplicationContext().getDatabasePath("OpenStrMapDB.db").toString());
+        loadFromFirebase();
     }
 
     private void saveToFirebase(List<Institute> institutes) {
@@ -413,10 +419,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void recreateDb() {
-        getApplicationContext().deleteDatabase(DBHelper.DATABASE_NAME);
-        createDb();
-    }
+
 
     private void getFileFromFirebase() {
         FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -595,15 +598,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private List<Institute> getDataFromLocalDb() {
-        List<Institute> inst = new ArrayList<>();
-        InstituteDao instituteDao = new InstituteDao(getApplicationContext());
-        instituteDao.open();
-        inst = instituteDao.getAllInstitutes();
-        instituteDao.close();
-        print(inst);
-        return inst;
-    }
+
 
     private void loadFromFirebase() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -627,6 +622,55 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private List<Institute> getDataFromLocalDb() {
+        List<Institute> inst = new ArrayList<>();
+        InstituteDao instituteDao = new InstituteDao(getApplicationContext());
+        instituteDao.open();
+        inst = instituteDao.getAllInstitutes();
+        instituteDao.close();
+        print(inst);
+        return inst;
+    }
+
+    public class asyncLoad extends AsyncTask<Void,Void,Void>{
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            return null;
+        }
+    }
+
+    /*
+    * institutes=getByType(1)   list kindergarten
+    * institutes=getByType(2)   list schools
+    * institutes=getByType(3)   list colleges
+    *
+    * */
+
+    private List<Institute> getByType(int id){
+        List<Institute> inst = new ArrayList<>();
+        InstituteDao instituteDao=new InstituteDao(getApplicationContext());
+        instituteDao.open();
+        inst = instituteDao.getByType(id);
+        instituteDao.close();
+        print(inst);
+        return inst;
+    }
+
+    /*
+    * institutes=getByGov(true)  list gov institutes
+    * institutes=getByGov(false)  list notGov institutes
+    * */
+    private List<Institute> getByGov(boolean bool){
+        List<Institute> inst = new ArrayList<>();
+        InstituteDao instituteDao=new InstituteDao(getApplicationContext());
+        instituteDao.open();
+        inst = instituteDao.getByGov(bool);
+        instituteDao.close();
+        print(inst);
+        return inst;
+    }
+
     private void initNav() {
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView = (NavigationView) findViewById(R.id.nav_menu);
@@ -635,23 +679,19 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.item1:
-
-                        //getDataFromLocalDb();
                         drawerLayout.closeDrawers();
                         break;
                     case R.id.item2:
-                        //loadFromFirebase();
+                        drawerLayout.closeDrawers();
                         break;
                     case R.id.item3:
-                        //recreateDb();
+                        drawerLayout.closeDrawers();
                         break;
                     case R.id.sub_item1:
-                        //new AsyncDownload().execute();
+                        drawerLayout.closeDrawers();
                         break;
                     case R.id.sub_item2:
-                        //new AsyncDownload().execute(list);
-                        //new AsyncDownload().execute();
-                        //recreateDb();
+                        drawerLayout.closeDrawers();
                         break;
                 }
                 return false;

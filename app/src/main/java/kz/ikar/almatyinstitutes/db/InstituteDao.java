@@ -23,76 +23,82 @@ public class InstituteDao {
     SQLiteOpenHelper sqLiteOpenHelper;
     SQLiteDatabase sqLiteDatabase;
 
-    private static String[] allColumns={
-            DBHelper.COLUMN_INSTITUTE_ID,DBHelper.COLUMN_INSTITUTE_NAME,
-            DBHelper.COLUMN_INSTITUTE_ADDRESS,DBHelper.COLUMN_INSTITUTE_PHONE,
-            DBHelper.COLUMN_INSTITUTE_POINT,DBHelper.COLUMN_INSTITUTE_HEAD,
-            DBHelper.COLUMN_INSTITUTE_TYPE,DBHelper.COLUMN_INSTITUTE_CATEGORY,
+    private static String[] allColumns = {
+            DBHelper.COLUMN_INSTITUTE_ID, DBHelper.COLUMN_INSTITUTE_NAME,
+            DBHelper.COLUMN_INSTITUTE_ADDRESS, DBHelper.COLUMN_INSTITUTE_PHONE,
+            DBHelper.COLUMN_INSTITUTE_POINT, DBHelper.COLUMN_INSTITUTE_HEAD,
+            DBHelper.COLUMN_INSTITUTE_TYPE, DBHelper.COLUMN_INSTITUTE_CATEGORY,
             DBHelper.COLUMN_INSTITUTE_ISGOV
     };
 
-    public InstituteDao(){
+    public InstituteDao() {
 
     }
-    public InstituteDao(Context context){
-        sqLiteOpenHelper=new DBHelper(context);
-        this.context=context;
+
+    public InstituteDao(Context context) {
+        sqLiteOpenHelper = new DBHelper(context);
+        this.context = context;
     }
 
-    public void open(){
-        sqLiteDatabase=sqLiteOpenHelper.getWritableDatabase();
+    public void open() {
+        sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
     }
-    public void close(){
+
+    public void close() {
         sqLiteDatabase.close();
     }
 
-    public Institute addInstitute(Institute institute){
-        ContentValues cv=new ContentValues();
-        cv.put(DBHelper.COLUMN_INSTITUTE_NAME,institute.getName());
-        cv.put(DBHelper.COLUMN_INSTITUTE_ADDRESS,institute.getAddress());
-        cv.put(DBHelper.COLUMN_INSTITUTE_PHONE,institute.getPhone());
-        cv.put(DBHelper.COLUMN_INSTITUTE_POINT,institute.getPoint().getId());
-        cv.put(DBHelper.COLUMN_INSTITUTE_HEAD,institute.getHead());
-        cv.put(DBHelper.COLUMN_INSTITUTE_TYPE,institute.getType().getId());
-        cv.put(DBHelper.COLUMN_INSTITUTE_ISGOV,institute.isGov());
-        int insetId=(int)sqLiteDatabase.insert(DBHelper.TABLE_INSTITUTE,null,cv);
-        return  institute;
+    public Institute addInstitute(Institute institute) {
+        ContentValues cv = new ContentValues();
+        cv.put(DBHelper.COLUMN_INSTITUTE_NAME, institute.getName());
+        cv.put(DBHelper.COLUMN_INSTITUTE_ADDRESS, institute.getAddress());
+        cv.put(DBHelper.COLUMN_INSTITUTE_PHONE, institute.getPhone());
+        cv.put(DBHelper.COLUMN_INSTITUTE_POINT, institute.getPoint().getId());
+        cv.put(DBHelper.COLUMN_INSTITUTE_HEAD, institute.getHead());
+        cv.put(DBHelper.COLUMN_INSTITUTE_TYPE, institute.getType().getId());
+        cv.put(DBHelper.COLUMN_INSTITUTE_ISGOV, institute.isGov());
+        int insetId = (int) sqLiteDatabase.insert(DBHelper.TABLE_INSTITUTE, null, cv);
+        return institute;
     }
 
 
-    public Category getCategory(int id){
-        TypeCategoryPointDao tcp=new TypeCategoryPointDao(context);
+    public Category getCategory(int id) {
+        TypeCategoryPointDao tcp = new TypeCategoryPointDao(context);
         tcp.open();
-        Category category=tcp.getCategoryById(id);
+        Category category = tcp.getCategoryById(id);
+        tcp.close();
         return category;
     }
-    public Type getType(int id){
-        TypeCategoryPointDao tcp=new TypeCategoryPointDao(context);
+
+    public Type getType(int id) {
+        TypeCategoryPointDao tcp = new TypeCategoryPointDao(context);
         tcp.open();
-        Type type=tcp.getTypeById(id);
+        Type type = tcp.getTypeById(id);
+        tcp.close();
         return type;
     }
-    public Boolean isGov(int i){
-        if (i==0){
+
+    public Boolean isGov(int i) {
+        if (i == 0) {
             return false;
         }
         return true;
     }
 
-    public Point getPoint(int id){
-        TypeCategoryPointDao tcp=new TypeCategoryPointDao(context);
+    public Point getPoint(int id) {
+        TypeCategoryPointDao tcp = new TypeCategoryPointDao(context);
         tcp.open();
-        Point p=tcp.getPointById(id);
+        Point p = tcp.getPointById(id);
         tcp.close();
         return p;
     }
 
-    public List<Institute> getAllInstitutes(){
-        Cursor cursor=sqLiteDatabase.query(DBHelper.TABLE_INSTITUTE,allColumns,null,null,null,null,null);
-        List<Institute> instituteList=new ArrayList<>();
-        if (cursor.getCount()>0){
-            while (cursor.moveToNext()){
-                Institute institute=new Institute(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_INSTITUTE_ID)),
+    public List<Institute> getAllInstitutes() {
+        Cursor cursor = sqLiteDatabase.query(DBHelper.TABLE_INSTITUTE, allColumns, null, null, null, null, null);
+        List<Institute> instituteList = new ArrayList<>();
+        if (cursor.getCount() > 0) {
+            while (cursor.moveToNext()) {
+                Institute institute = new Institute(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_INSTITUTE_ID)),
                         cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_INSTITUTE_NAME)),
                         cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_INSTITUTE_ADDRESS)),
                         cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_INSTITUTE_PHONE)),
@@ -101,14 +107,54 @@ public class InstituteDao {
                         getType(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_INSTITUTE_TYPE))),
                         null,
                         isGov(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_INSTITUTE_ISGOV))));
-
                 instituteList.add(institute);
             }
         }
-        return  instituteList;
+        return instituteList;
     }
 
-
-
-
+    public List<Institute> getByType(int id) {
+        Cursor cursor = sqLiteDatabase.query(DBHelper.TABLE_INSTITUTE, allColumns,
+                DBHelper.COLUMN_INSTITUTE_TYPE + " = ?", new String[]{String.valueOf(id)}, null, null, null);
+        List<Institute> instituteList = new ArrayList<>();
+        if (cursor.getCount() > 0) {
+            while (cursor.moveToNext()) {
+                Institute institute = new Institute(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_INSTITUTE_ID)),
+                        cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_INSTITUTE_NAME)),
+                        cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_INSTITUTE_ADDRESS)),
+                        cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_INSTITUTE_PHONE)),
+                        getPoint(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_INSTITUTE_POINT))),
+                        cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_INSTITUTE_HEAD)),
+                        getType(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_INSTITUTE_TYPE))),
+                        null,
+                        isGov(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_INSTITUTE_ISGOV))));
+                instituteList.add(institute);
+            }
+        }
+        return instituteList;
+    }
+    public List<Institute> getByGov(boolean bool) {
+        int i=0;
+        if (bool){
+            i=1;
+        }
+        Cursor cursor = sqLiteDatabase.query(DBHelper.TABLE_INSTITUTE, allColumns,
+                DBHelper.COLUMN_INSTITUTE_ISGOV + "=?", new String[]{String.valueOf(i)}, null, null, null);
+        List<Institute> instituteList = new ArrayList<>();
+        if (cursor.getCount() > 0) {
+            while (cursor.moveToNext()) {
+                Institute institute = new Institute(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_INSTITUTE_ID)),
+                        cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_INSTITUTE_NAME)),
+                        cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_INSTITUTE_ADDRESS)),
+                        cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_INSTITUTE_PHONE)),
+                        getPoint(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_INSTITUTE_POINT))),
+                        cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_INSTITUTE_HEAD)),
+                        getType(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_INSTITUTE_TYPE))),
+                        null,
+                        isGov(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_INSTITUTE_ISGOV))));
+                instituteList.add(institute);
+            }
+        }
+        return instituteList;
+    }
 }
