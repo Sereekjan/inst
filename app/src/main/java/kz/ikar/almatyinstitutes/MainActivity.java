@@ -25,6 +25,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
@@ -97,7 +98,9 @@ public class MainActivity extends AppCompatActivity{
 
     private CardView topCardView;
     private TextView topTextView;
-    //private List<Institute> institutes;
+    private LottieAnimationView lottieAnimationView;
+
+    private Handler mainHandler;
 
     private double defLat = 43.271780;
     private double defLng = 76.915002;
@@ -109,6 +112,7 @@ public class MainActivity extends AppCompatActivity{
         Mapbox.getInstance(this, getString(R.string.access_token));
 
         setContentView(R.layout.activity_main);
+        mainHandler = new Handler(getMainLooper());
 
         mapView = (MapView) findViewById(R.id.mapView);
         searchTintView = findViewById(R.id.view_search_tint);
@@ -117,6 +121,7 @@ public class MainActivity extends AppCompatActivity{
         topRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_top);
         topCardView = (CardView) findViewById(R.id.cardview_top);
         topTextView = (TextView) findViewById(R.id.textview_top);
+        lottieAnimationView = (LottieAnimationView) findViewById(R.id.animation_view);
 
         this.savedInstanceState = savedInstanceState;
         mapView.onCreate(savedInstanceState);
@@ -154,6 +159,9 @@ public class MainActivity extends AppCompatActivity{
             }
         });
 
+        lottieAnimationView.cancelAnimation();
+        lottieAnimationView.setVisibility(View.GONE);
+
         searchRecyclerView.setItemAnimator(new DefaultItemAnimator());
         searchRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -164,17 +172,27 @@ public class MainActivity extends AppCompatActivity{
         searchAdapter = new SearchInstitutesAdapter(new ArrayList<Institute>(), this);
         searchRecyclerView.setAdapter(searchAdapter);
 
-        Thread thread = new Thread(new Runnable() {
+        Runnable r = new Runnable() {
             @Override
             public void run() {
-                List<Institute> institutes = getDataFromLocalDb();
+                mainHandler.post(startAnimation);
 
-                topInstitutesAdapter = new TopInstitutesAdapter(institutes, MainActivity.this);
-                topRecyclerView.setAdapter(topInstitutesAdapter);
+                final List<Institute> institutes = getDataFromLocalDb();
 
-                searchView.setSuggestionBuilder(new SampleSuggestionsBuilder(MainActivity.this, institutes));
+                Runnable rbl = new Runnable() {
+                    @Override
+                    public void run() {
+                        topInstitutesAdapter = new TopInstitutesAdapter(institutes, MainActivity.this);
+                        topRecyclerView.setAdapter(topInstitutesAdapter);
+
+                        searchView.setSuggestionBuilder(new SampleSuggestionsBuilder(MainActivity.this, institutes));
+                        stopAnimation.run();
+                    }
+                };
+                mainHandler.post(rbl);
             }
-        });
+        };
+        mainHandler.post(r);
 
         /*topInstitutesAdapter = new TopInstitutesAdapter(institutes, this);
         topRecyclerView.setAdapter(topInstitutesAdapter);*/
@@ -195,13 +213,9 @@ public class MainActivity extends AppCompatActivity{
         searchView.setSearchListener(new PersistentSearchView.SearchListener() {
             @Override
             public boolean onSuggestion(SearchItem searchItem) {
-                for (Institute inst : getDataFromLocalDb()) {
-                    if (searchItem.getTitle().equals(inst.getName())) {
-                        pickLocation(inst);
-                        onBackPressed();
-                        return false;
-                    }
-                }
+                Institute inst = getByName(searchItem.getTitle());
+                pickLocation(inst);
+                onBackPressed();
                 return false;
             }
 
@@ -275,7 +289,14 @@ public class MainActivity extends AppCompatActivity{
         initNav();
         FirebaseApp.initializeApp(this);
 
-        //recreateDb();
+        new Runnable() {
+            @Override
+            public void run() {
+                mainHandler.post(startAnimation);
+                recreateDb();
+                mainHandler.post(stopAnimation);
+            }
+        }.run();
     }
 
     @Override
@@ -301,7 +322,6 @@ public class MainActivity extends AppCompatActivity{
     }
 
     public void pickLocations(List<Institute> insts) {
-        map.clear();
         map.resetNorth();
         topRecyclerView.setVisibility(View.GONE);
 
@@ -325,12 +345,27 @@ public class MainActivity extends AppCompatActivity{
                 map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition),
                         3000,
                         null);
-
-                Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_SHORT).show();
             }
         };
         handler.obtainMessage();
+        mainHandler.post(stopAnimation);
     }
+
+    Runnable stopAnimation = new Runnable(){
+        @Override
+        public void run() {
+            lottieAnimationView.cancelAnimation();
+            lottieAnimationView.setVisibility(View.GONE);
+        }
+    };
+
+    Runnable startAnimation = new Runnable(){
+        @Override
+        public void run() {
+            lottieAnimationView.setVisibility(View.VISIBLE);
+            lottieAnimationView.playAnimation();
+        }
+    };
 
     private void fillResultToRecyclerView(String query) {
         searchAdapter.replaceWith(getListByName(query));
@@ -425,7 +460,6 @@ public class MainActivity extends AppCompatActivity{
     private void recreateDb() {
         getApplicationContext().deleteDatabase(DBHelper.DATABASE_NAME);
         createDb();
-
     }
 
     private void createDb() {
@@ -749,6 +783,8 @@ public class MainActivity extends AppCompatActivity{
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 Thread thread;
+                map.clear();
+                mainHandler.post(startAnimation);
                 switch (item.getItemId()) {
                     case R.id.item1:
                         drawerLayout.closeDrawers();
