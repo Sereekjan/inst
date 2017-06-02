@@ -4,7 +4,9 @@ import android.animation.Animator;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
@@ -18,13 +20,18 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
@@ -37,21 +44,37 @@ import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 
 import org.cryse.widget.persistentsearch.PersistentSearchView;
 import org.cryse.widget.persistentsearch.SearchItem;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+
 import kz.ikar.almatyinstitutes.db.DBHelper;
 import kz.ikar.almatyinstitutes.classes.Category;
 import kz.ikar.almatyinstitutes.classes.Institute;
 import kz.ikar.almatyinstitutes.classes.Point;
 import kz.ikar.almatyinstitutes.classes.Type;
+import kz.ikar.almatyinstitutes.db.InstituteDao;
+import kz.ikar.almatyinstitutes.db.TypeCategoryPointDao;
+import kz.ikar.almatyinstitutes.retrofit_api.MyClass;
+import kz.ikar.almatyinstitutes.retrofit_api.Result;
+import kz.ikar.almatyinstitutes.retrofit_api.RetrofitApi;
 import kz.ikar.almatyinstitutes.search.SampleSuggestionsBuilder;
 import kz.ikar.almatyinstitutes.search.SearchResult;
 import kz.ikar.almatyinstitutes.search.SearchInstitutesAdapter;
 import kz.ikar.almatyinstitutes.search.SimpleAnimationListener;
 import kz.ikar.almatyinstitutes.search.TopInstitutesAdapter;
+import retrofit2.Call;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MainActivity extends AppCompatActivity{
+import static java.lang.System.in;
+
+public class MainActivity extends AppCompatActivity {
 
     private MapView mapView;
     private MapboxMap map;
@@ -70,6 +93,7 @@ public class MainActivity extends AppCompatActivity{
     private CardView topCardView;
     private TextView topTextView;
     private List<Institute> institutes;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,6 +148,7 @@ public class MainActivity extends AppCompatActivity{
                 }
             }
         });
+
 
         searchRecyclerView.setItemAnimator(new DefaultItemAnimator());
         searchRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -214,7 +239,7 @@ public class MainActivity extends AppCompatActivity{
             @Override
             public void onSearchExit() {
                 searchAdapter.clear();
-                if(searchRecyclerView.getVisibility() == View.VISIBLE) {
+                if (searchRecyclerView.getVisibility() == View.VISIBLE) {
                     searchRecyclerView.setVisibility(View.GONE);
                 }
                 topCardView.setVisibility(View.VISIBLE);
@@ -230,8 +255,12 @@ public class MainActivity extends AppCompatActivity{
                 }
             }
         });
-        drawerLayout=(DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         initNav();
+        FirebaseApp.initializeApp(this);
+
+        recreateDb();
+        loadFromFirebase();
     }
 
     public void pickLocation(Institute inst) {
@@ -246,7 +275,7 @@ public class MainActivity extends AppCompatActivity{
 
     private void fillResultToRecyclerView(String query) {
         List<SearchResult> newResults = new ArrayList<>();
-        for(int i =0; i< 10; i++) {
+        for (int i = 0; i < 10; i++) {
             SearchResult result = new SearchResult(query, query + Integer.toString(i), "");
             newResults.add(result);
         }
@@ -255,9 +284,9 @@ public class MainActivity extends AppCompatActivity{
 
     @Override
     public void onBackPressed() {
-        if(searchView.isSearching()) {
+        if (searchView.isSearching()) {
             searchView.closeSearch();
-        } else if(searchRecyclerView.getVisibility() == View.VISIBLE) {
+        } else if (searchRecyclerView.getVisibility() == View.VISIBLE) {
             searchAdapter.clear();
             searchRecyclerView.setVisibility(View.GONE);
         } else {
@@ -284,8 +313,8 @@ public class MainActivity extends AppCompatActivity{
     private void updateMap(double latitude, double longitude, String title, int duration, int zoom) {
         map.resetNorth();
         map.addMarker(new MarkerOptions()
-        .position(new LatLng(latitude, longitude))
-        .title(title));
+                .position(new LatLng(latitude, longitude))
+                .title(title));
 
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(new LatLng(latitude, longitude))
@@ -339,54 +368,256 @@ public class MainActivity extends AppCompatActivity{
     }
 
 
-
-
     ///////////////////////////////////////////////////////////////
-    private void createDb(){
-        DBHelper dbHelper=new DBHelper(getApplicationContext());
-        SQLiteDatabase database=dbHelper.getWritableDatabase();
+    private void createDb() {
+        DBHelper dbHelper = new DBHelper(getApplicationContext());
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
 
-        Log.e("DATABASE PATH",getApplicationContext().getDatabasePath("OpenStrMapDB.db").toString());
+        Log.e("DATABASE PATH", getApplicationContext().getDatabasePath("OpenStrMapDB.db").toString());
     }
 
-    private void addCategories(){
-        DBHelper dbHelper=new DBHelper(this);
-        SQLiteDatabase database=dbHelper.getWritableDatabase();
-        ContentValues cv=new ContentValues();
-
-    }
-
-    private void saveToFirebase(){
-        FirebaseDatabase database=FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference=database.getReference("Institutes");
-        for(int i=0;i<10;i++){
-            Point point=new Point(i,i,i);
-            Type type=new Type(i,"type"+i);
-            Category category=new Category(i,"category"+i);
-            Institute institute=new Institute(i,"name"+i,"address"+i,"phone"+i,point,"head"+i,type,category,true);
-            databaseReference.child("intitute"+i).setValue(institute);
+    private void saveToFirebase(List<Institute> institutes) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference = database.getReference("Institutes");
+        for (int i = 0; i < institutes.size(); i++) {
+            Institute in = institutes.get(i);
+            databaseReference.child("intitute" + i).setValue(in);
         }
     }
 
-    private void saveCommentToFirebase(){
+    private void addToDb(List<Institute> instituteList) {
+        for (Institute in : instituteList) {
+            if (in.getPoint() != null) {
+                addPointToDb(in.getPoint());
+                addIntituteToDb(in);
+            }
+        }
+    }
+
+    private void addPointToDb(Point p) {
+        TypeCategoryPointDao tcpd = new TypeCategoryPointDao(this);
+        tcpd.open();
+        tcpd.addPoint(p);
+        tcpd.close();
+    }
+
+    private void addIntituteToDb(Institute institute) {
+        InstituteDao instituteDao = new InstituteDao(this);
+        instituteDao.open();
+        instituteDao.addInstitute(institute);
+        instituteDao.close();
+    }
+
+
+    private void saveCommentToFirebase() {
 
     }
-    private void recreateDb(){
-        //getApplicationContext().deleteDatabase(DBHelper.DATABASE_NAME);
+
+    private void recreateDb() {
+        getApplicationContext().deleteDatabase(DBHelper.DATABASE_NAME);
         createDb();
     }
 
-    private void loadFromFirebase(){
-        FirebaseDatabase database=FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference=database.getReference("Institutes");
-        final GenericTypeIndicator<List<Institute>> genericTypeIndicator=new GenericTypeIndicator<List<Institute>>() {};
+    private void getFileFromFirebase() {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageReference = storage.getReferenceFromUrl("gs://openstrmap.appspot.com/148-v1.json");
+        final long ONE_MEGABYTE = 1024 * 1024;
+        storageReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                String str = "";
+                try {
+                    str = new String(bytes, "UTF-8");
+                    fromJsonToObject(str, true, 2);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void getFileFromFirebase1() {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageReference = storage.getReferenceFromUrl("gs://openstrmap.appspot.com/146-v1.json");
+        final long ONE_MEGABYTE = 1024 * 1024;
+        storageReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                String str = "";
+                try {
+                    str = new String(bytes, "UTF-8");
+                    fromJsonToObject(str, false, 2);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void getFileFromFirebase2() {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageReference = storage.getReferenceFromUrl("gs://openstrmap.appspot.com/144-v1.json");
+        final long ONE_MEGABYTE = 1024 * 1024;
+        storageReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                String str = "";
+                try {
+                    str = new String(bytes, "UTF-8");
+                    fromJsonToObject(str, false, 3);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void getFileFromFirebase3() {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageReference = storage.getReferenceFromUrl("gs://openstrmap.appspot.com/138-v1.json");
+        final long ONE_MEGABYTE = 1024 * 1024;
+        storageReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                String str = "";
+                try {
+                    str = new String(bytes, "UTF-8");
+                    fromJsonToObject(str, true, 1);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private List<Institute> list = new ArrayList<>();
+
+    public MyClass myClass;
+    private Retrofit retrofit;
+    private Result result;
+    private String baseUrl = "https://maps.googleapis.com/maps/api/geocode/";
+
+    private void print(List<Institute> institutes) {
+        for (int i = 0; i < institutes.size(); i++) {
+            Log.e("NAME::::::::       ", institutes.get(i).getName());
+        }
+    }
+
+    public class AsyncDownload extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            getFileFromFirebase();
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            getFileFromFirebase1();
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            getFileFromFirebase2();
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            getFileFromFirebase3();
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            for (Institute inst : list) {
+                try {
+                    requestLatLong(inst);
+                    Thread.sleep(4000);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+    }
+
+
+    private void requestLatLong(Institute inst) throws IOException {
+        //https://maps.googleapis.com/maps/api/geocode/json?&address=Общеобразовательная%20школа%20№91%20алмата
+
+        String query = inst.getName().replace(" ", "%20");
+        String createdUrl = "json?&address=" + query + "%20алмата" + "&key=AIzaSyD9mkQ3VWZeUQSH74BF3x8kldpfTITZG-E";
+
+        retrofit = new Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        RetrofitApi api = retrofit.create(RetrofitApi.class);
+        Call<MyClass> call = api.getMyClass(createdUrl);
+        myClass = call.execute().body();
+        Point p = new Point();
+        p.setLatitude(myClass.getResults().get(0).getGeometry().getLocation().getLat());
+        p.setLongitude(myClass.getResults().get(0).getGeometry().getLocation().getLng());
+        inst.setPoint(p);
+        Log.d("SUCCESS",inst.getName() + "   " + String.valueOf(inst.getPoint().getLatitude()) + "   " + String.valueOf(inst.getPoint().getLongitude()));
+    }
+
+    private void fromJsonToObject(String str, boolean gov, int tmp) {
+        try {
+            JSONArray array = new JSONArray(str);
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject elem = (JSONObject) array.get(i);
+                Institute institute = new Institute();
+                institute.setName(elem.getString("name").replaceAll("\\s+", " "));
+                institute.setPhone(elem.getString("telephone"));
+                institute.setHead(elem.getString("head"));
+                institute.setAddress(elem.getString("address"));
+                Type type = new Type();
+                if (tmp == 2) {
+                    type.setId(2);
+                    type.setName("school");
+                } else if (tmp == 3) {
+                    type.setId(3);
+                    type.setName("college");
+                } else if (tmp == 1) {
+                    type.setId(1);
+                    type.setName("kindergarten");
+                }
+                institute.setType(type);
+                institute.setGov(gov);
+                list.add(institute);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private List<Institute> getDataFromLocalDb() {
+        List<Institute> inst = new ArrayList<>();
+        InstituteDao instituteDao = new InstituteDao(getApplicationContext());
+        instituteDao.open();
+        inst = instituteDao.getAllInstitutes();
+        instituteDao.close();
+        print(inst);
+        return inst;
+    }
+
+    private void loadFromFirebase() {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference = database.getReference("Institutes");
+        final GenericTypeIndicator<List<Institute>> genericTypeIndicator = new GenericTypeIndicator<List<Institute>>() {
+        };
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                List<Institute> list=new ArrayList<Institute>();
-                for (DataSnapshot child:dataSnapshot.getChildren()){
+                List<Institute> list = new ArrayList<Institute>();
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
                     list.add(child.getValue(Institute.class));
                 }
+                addToDb(list);
             }
 
             @Override
@@ -396,26 +627,30 @@ public class MainActivity extends AppCompatActivity{
         });
     }
 
-    private void initNav(){
-
-        drawerLayout=(DrawerLayout) findViewById(R.id.drawer_layout);
-        navigationView=(NavigationView) findViewById(R.id.nav_menu);
+    private void initNav() {
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        navigationView = (NavigationView) findViewById(R.id.nav_menu);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()){
+                switch (item.getItemId()) {
                     case R.id.item1:
+
+                        //getDataFromLocalDb();
                         drawerLayout.closeDrawers();
                         break;
                     case R.id.item2:
-                        loadFromFirebase();
+                        //loadFromFirebase();
                         break;
                     case R.id.item3:
-                        saveToFirebase();
+                        //recreateDb();
                         break;
                     case R.id.sub_item1:
+                        //new AsyncDownload().execute();
                         break;
                     case R.id.sub_item2:
+                        //new AsyncDownload().execute(list);
+                        //new AsyncDownload().execute();
                         //recreateDb();
                         break;
                 }

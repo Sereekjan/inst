@@ -140,9 +140,9 @@ public class Institute {
         isGov = gov;
     }
 
-    public String getIsGov() {
+    /*public String getIsGov() {
         return isGov ? "Государственное учреждение" : "Частное учреждение";
-    }
+    }*/
 
     public float getAvgRating() {
         if (comments == null) {
