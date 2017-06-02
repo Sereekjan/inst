@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -95,7 +97,7 @@ public class MainActivity extends AppCompatActivity{
 
     private CardView topCardView;
     private TextView topTextView;
-    private List<Institute> institutes;
+    //private List<Institute> institutes;
 
     private double defLat = 43.271780;
     private double defLng = 76.915002;
@@ -144,11 +146,11 @@ public class MainActivity extends AppCompatActivity{
                         3000,
                         null);
 
-                for (Institute inst : getDataFromLocalDb()) {
+                /*for (Institute inst : getDataFromLocalDb()) {
                     map.addMarker(new MarkerOptions()
                             .position(new LatLng(inst.getPoint().getLatitude(), inst.getPoint().getLongitude()))
                             .title(inst.getName()));
-                }
+                }*/
             }
         });
 
@@ -162,8 +164,20 @@ public class MainActivity extends AppCompatActivity{
         searchAdapter = new SearchInstitutesAdapter(new ArrayList<Institute>(), this);
         searchRecyclerView.setAdapter(searchAdapter);
 
-        topInstitutesAdapter = new TopInstitutesAdapter(getDataFromLocalDb(), this);
-        topRecyclerView.setAdapter(topInstitutesAdapter);
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<Institute> institutes = getDataFromLocalDb();
+
+                topInstitutesAdapter = new TopInstitutesAdapter(institutes, MainActivity.this);
+                topRecyclerView.setAdapter(topInstitutesAdapter);
+
+                searchView.setSuggestionBuilder(new SampleSuggestionsBuilder(MainActivity.this, institutes));
+            }
+        });
+
+        /*topInstitutesAdapter = new TopInstitutesAdapter(institutes, this);
+        topRecyclerView.setAdapter(topInstitutesAdapter);*/
 
         searchView.setHomeButtonListener(new PersistentSearchView.HomeButtonListener() {
             @Override
@@ -177,7 +191,7 @@ public class MainActivity extends AppCompatActivity{
                 searchView.cancelEditing();
             }
         });
-        searchView.setSuggestionBuilder(new SampleSuggestionsBuilder(this, getDataFromLocalDb()));
+        //searchView.setSuggestionBuilder(new SampleSuggestionsBuilder(this, institutes));
         searchView.setSearchListener(new PersistentSearchView.SearchListener() {
             @Override
             public boolean onSuggestion(SearchItem searchItem) {
@@ -261,7 +275,7 @@ public class MainActivity extends AppCompatActivity{
         initNav();
         FirebaseApp.initializeApp(this);
 
-        recreateDb();
+        //recreateDb();
     }
 
     @Override
@@ -290,6 +304,8 @@ public class MainActivity extends AppCompatActivity{
         map.clear();
         map.resetNorth();
         topRecyclerView.setVisibility(View.GONE);
+
+
         for (Institute inst : insts) {
             map.addMarker(new MarkerOptions()
                     .position(new LatLng(inst.getPoint().getLatitude(),
@@ -297,13 +313,23 @@ public class MainActivity extends AppCompatActivity{
                     .title(inst.getName()));
         }
 
-        CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(new LatLng(defLat, defLng))
-                .zoom(10)
-                .build();
-        map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition),
-                3000,
-                null);
+        Handler handler = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+                //super.handleMessage(msg);
+                CameraPosition cameraPosition = new CameraPosition.Builder()
+                        .target(new LatLng(defLat, defLng))
+                        .zoom(10)
+                        .build();
+
+                map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition),
+                        3000,
+                        null);
+
+                Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_SHORT).show();
+            }
+        };
+        handler.obtainMessage();
     }
 
     private void fillResultToRecyclerView(String query) {
@@ -722,28 +748,62 @@ public class MainActivity extends AppCompatActivity{
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                Thread thread;
                 switch (item.getItemId()) {
                     case R.id.item1:
                         drawerLayout.closeDrawers();
-                        pickLocations(getByType(1));
+                        thread = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                pickLocations(getByType(1));
+                            }
+                        });
                         break;
                     case R.id.item2:
                         drawerLayout.closeDrawers();
-                        pickLocations(getByType(2));
+                        thread = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                pickLocations(getByType(2));
+                            }
+                        });
                         break;
                     case R.id.item3:
                         drawerLayout.closeDrawers();
-                        pickLocations(getByType(3));
+                        thread = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                pickLocations(getByType(3));
+                            }
+                        });
                         break;
                     case R.id.sub_item1:
                         drawerLayout.closeDrawers();
-                        pickLocations(getByGov(true));
+                        thread = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                pickLocations(getByGov(true));
+                            }
+                        });
                         break;
                     case R.id.sub_item2:
                         drawerLayout.closeDrawers();
-                        pickLocations(getByGov(false));
+                        thread = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                pickLocations(getByGov(false));
+                            }
+                        });
                         break;
+                    default:
+                        thread = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                            }
+                        });
                 }
+                thread.start();
                 return false;
             }
         });
