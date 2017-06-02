@@ -113,14 +113,6 @@ public class MainActivity extends AppCompatActivity{
         topCardView = (CardView) findViewById(R.id.cardview_top);
         topTextView = (TextView) findViewById(R.id.textview_top);
 
-        //institutes = Institute.getFakeInstitutes();
-
-        if (!DBHelper.isExists()) {
-            Snackbar.make(mapView, "Doesn't exist", Snackbar.LENGTH_SHORT).show();
-        } else {
-            Snackbar.make(mapView, "Exists", Snackbar.LENGTH_SHORT).show();
-        }
-
         this.savedInstanceState = savedInstanceState;
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(new OnMapReadyCallback() {
@@ -147,7 +139,7 @@ public class MainActivity extends AppCompatActivity{
                 map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition),
                         3000,
                         null);
-                for (Institute inst : Institute.getFakeInstitutes()) {
+                for (Institute inst : getDataFromLocalDb()) {
                     map.addMarker(new MarkerOptions()
                             .position(new LatLng(inst.getPoint().getLatitude(), inst.getPoint().getLongitude()))
                             .title(inst.getName()));
@@ -165,7 +157,7 @@ public class MainActivity extends AppCompatActivity{
         searchAdapter = new SearchInstitutesAdapter(new ArrayList<Institute>(), this);
         searchRecyclerView.setAdapter(searchAdapter);
 
-        topInstitutesAdapter = new TopInstitutesAdapter(institutes, this);
+        topInstitutesAdapter = new TopInstitutesAdapter(getDataFromLocalDb(), this);
         topRecyclerView.setAdapter(topInstitutesAdapter);
 
         searchView.setHomeButtonListener(new PersistentSearchView.HomeButtonListener() {

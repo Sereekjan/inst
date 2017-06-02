@@ -133,6 +133,7 @@ public class InstituteDao {
         }
         return instituteList;
     }
+
     public List<Institute> getByGov(boolean bool) {
         int i=0;
         if (bool){
@@ -159,8 +160,8 @@ public class InstituteDao {
     }
 
     public Institute getByName(String name) {
-        Cursor cursor = sqLiteDatabase.query(DBHelper.TABLE_INSTITUTE, allColumns,
-                DBHelper.COLUMN_INSTITUTE_NAME + " like ?", new String[]{"'" + name + "'"}, null, null, null);
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + DBHelper.TABLE_INSTITUTE +
+            " WHERE name = ?", new String[]{ name });
         Institute institute = null;
         if (cursor.getCount() > 0) {
             cursor.moveToNext();

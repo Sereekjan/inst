@@ -162,9 +162,9 @@ public class Institute {
         return Math.round(avgRate * 10.0f) / 10.0f;
     }
 
-    public static List<Institute> getFakeInstitutes() {
+    /*public static List<Institute> getFakeInstitutes() {
         List<Institute> institutes = new ArrayList<>();
-        Type type = new Type(1, "Школа"); // TODO: Change default type(school)
+        Type type = new Type(1, "Школа");
         institutes.add(
                 new Institute(
                         1,
@@ -241,7 +241,7 @@ public class Institute {
                 "середине абзаца.", new Date()));
         institutes.get(0).setComments(comments);
         return institutes;
-    }
+    }*/
 
     public List<Comment> getComments() {
         return comments;

@@ -41,15 +41,13 @@ public class SearchInstitutesAdapter extends RecyclerView.Adapter<SearchInstitut
         Institute result = mItemList.get(position);
         holder.mTitleTextView.setText(result.getName());
         holder.mDescriptionTextView.setText(result.getAddress());
-        String typeName = mItemList.get(position).getType().getName();
-        if (typeName.equals("Детский сад")) {
+        if (mItemList.get(position).getType().getId() == 0) {
             holder.mIconImageView.setImageResource(R.drawable.ic_kindergarten);
-        } else if (typeName.equals("Школа")) {
+        } else if (mItemList.get(position).getType().getId() == 1) {
             holder.mIconImageView.setImageResource(R.drawable.ic_school);
-        } else if (typeName.equals("Колледж")) {
+        } else {
             holder.mIconImageView.setImageResource(R.drawable.ic_college);
         }
-        // TODO: Check this ^^^
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

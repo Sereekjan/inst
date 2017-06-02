@@ -106,10 +106,12 @@ public class DBHelper extends SQLiteOpenHelper {
         db.insert(TABLE_TYPE,null,cv);
     }
 
-    public static boolean isExists() {
+    public static boolean isExists(Context context) {
         SQLiteDatabase checkDB = null;
         try {
-            checkDB = SQLiteDatabase.openDatabase(DATABASE_NAME, null,
+            checkDB = SQLiteDatabase.openDatabase(
+                    context.getDatabasePath(DATABASE_NAME).getAbsolutePath(),
+                    null,
                     SQLiteDatabase.OPEN_READONLY);
             checkDB.close();
         } catch (SQLiteException e) {

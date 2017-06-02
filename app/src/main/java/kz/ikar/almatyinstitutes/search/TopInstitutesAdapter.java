@@ -40,7 +40,13 @@ public class TopInstitutesAdapter extends RecyclerView.Adapter<TopInstitutesAdap
         Institute result = mItemList.get(position);
         holder.mTitleTextView.setText(result.getName());
         holder.mDescriptionTextView.setText(result.getAddress());
-        holder.mIconImageView.setImageResource(R.drawable.ic_school);
+        if (mItemList.get(position).getType().getId() == 0) {
+            holder.mIconImageView.setImageResource(R.drawable.ic_kindergarten);
+        } else if (mItemList.get(position).getType().getId() == 1) {
+            holder.mIconImageView.setImageResource(R.drawable.ic_school);
+        } else {
+            holder.mIconImageView.setImageResource(R.drawable.ic_college);
+        }
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
