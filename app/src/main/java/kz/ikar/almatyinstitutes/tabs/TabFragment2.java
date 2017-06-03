@@ -87,6 +87,31 @@ public class TabFragment2 extends Fragment{
         });
     }
 
+    private void getInstituteComments(final String address) {
+        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        Query query = reference.child("Institutes");
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    Institute inst = ds.getValue(Institute.class);
+                    if (inst.getAddress().equals(address)) {
+                        refreshRecycler(inst.getComments());
+                        break;
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void refreshRecycler(List<Comment> list){
+        commentsAdapter.setItems(list);
+    }
+
 
     @Nullable
     @Override
@@ -100,7 +125,7 @@ public class TabFragment2 extends Fragment{
 
         final Institute institute = ((AboutActivity)getActivity()).institute;
         List<Comment> comments=((AboutActivity)getActivity()).commentList;
-        
+
         commentsAdapter = new CommentsAdapter(comments);
         linearLayoutManager = new LinearLayoutManager(getActivity());
         commentsRecyclerView.setLayoutManager(linearLayoutManager);
