@@ -16,6 +16,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import kz.ikar.almatyinstitutes.classes.Comment;
@@ -44,6 +45,7 @@ public class AboutActivity extends AppCompatActivity {
         tabLayout.addTab(tabLayout.newTab().setText("Комментарии"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
+        commentList = new ArrayList<>();
         Gson gson = new Gson();
         institute = gson.fromJson(getIntent().getStringExtra("institute"),
                 Institute.class);
