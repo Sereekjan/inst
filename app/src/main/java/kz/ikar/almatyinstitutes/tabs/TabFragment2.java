@@ -100,7 +100,7 @@ public class TabFragment2 extends Fragment{
 
         final Institute institute = ((AboutActivity)getActivity()).institute;
         List<Comment> comments=((AboutActivity)getActivity()).commentList;
-        
+
         commentsAdapter = new CommentsAdapter(comments);
         linearLayoutManager = new LinearLayoutManager(getActivity());
         commentsRecyclerView.setLayoutManager(linearLayoutManager);
@@ -153,7 +153,7 @@ public class TabFragment2 extends Fragment{
                             @Override
                             public void onClick(View v) {
                                 getInstituteByAddress(institute.getAddress(),input.getText().toString(),ratebar.getProgress());
-                                Snackbar.make(view, input.getText(), Snackbar.LENGTH_SHORT).show();
+                                Snackbar.make(view, "Обновите список", Snackbar.LENGTH_SHORT).show();
                                 dialog.cancel();
                             }
                         });
