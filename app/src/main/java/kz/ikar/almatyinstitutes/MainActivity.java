@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        recreateDb();
+        //recreateDb();
         Mapbox.getInstance(this, getString(R.string.access_token));
 
         FirebaseApp.initializeApp(this);
@@ -191,7 +191,14 @@ public class MainActivity extends AppCompatActivity{
             public void run() {
                 //mainHandler.post(startAnimation);
 
-                final List<Institute> institutes = getDataFromLocalDb();
+
+
+
+
+
+
+
+                /*final List<Institute> institutes = getDataFromLocalDb();
 
                 Runnable rbl = new Runnable() {
                     @Override
@@ -203,7 +210,12 @@ public class MainActivity extends AppCompatActivity{
                         stopAnimation.run();
                     }
                 };
-                mainHandler.post(rbl);
+                mainHandler.post(rbl);*/
+
+
+
+
+
                 final long currentTs = System.currentTimeMillis()/1000;
                 long lastupdate = sPrefs.getLong("LastDBUpdateDate", 0);
 
