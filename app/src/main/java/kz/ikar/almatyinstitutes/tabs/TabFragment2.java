@@ -1,5 +1,6 @@
 package kz.ikar.almatyinstitutes.tabs;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -97,7 +98,8 @@ public class TabFragment2 extends Fragment{
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     Institute inst = ds.getValue(Institute.class);
                     if (inst.getAddress().equals(address)) {
-                        refreshRecycler(inst.getComments());
+                        if (inst.getComments()!=null)
+                            refreshRecycler(inst.getComments());
                         break;
                     }
                 }
@@ -119,6 +121,7 @@ public class TabFragment2 extends Fragment{
             commentsRecyclerView.setVisibility(View.VISIBLE);
             emptyView.setVisibility(View.GONE);
         }
+
     }
 
 

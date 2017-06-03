@@ -8,6 +8,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
 import kz.ikar.almatyinstitutes.AboutActivity;
 import kz.ikar.almatyinstitutes.R;
 import kz.ikar.almatyinstitutes.classes.Institute;
@@ -19,6 +26,31 @@ public class TabFragment1 extends Fragment {
     TextView textViewAddress;
     TextView textViewContacts;
     TextView textViewRating;
+
+    public void updateRating(final Institute institute){
+        //final String str=institute.getName();
+        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        Query query = reference.child("Institutes");
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    Institute inst = ds.getValue(Institute.class);
+                    if (inst.getName().toString().equals(institute.getName())) {
+                        if (inst.getComments()!=null) {
+                            institute.setComments(inst.getComments());
+                            textViewRating.setText(String.valueOf(inst.getAvgRating()));
+                        }
+                        break;
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
 
     @Nullable
     @Override
@@ -48,7 +80,7 @@ public class TabFragment1 extends Fragment {
         } else {
             textViewRating.setText(String.valueOf(institute.getAvgRating()));
         }
-
+        updateRating(institute);
         return view;
     }
 }
