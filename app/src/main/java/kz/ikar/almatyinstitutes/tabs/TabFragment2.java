@@ -100,7 +100,7 @@ public class TabFragment2 extends Fragment{
 
         final Institute institute = ((AboutActivity)getActivity()).institute;
         List<Comment> comments=((AboutActivity)getActivity()).commentList;
-        // TODO: Change data source
+        
         commentsAdapter = new CommentsAdapter(comments);
         linearLayoutManager = new LinearLayoutManager(getActivity());
         commentsRecyclerView.setLayoutManager(linearLayoutManager);

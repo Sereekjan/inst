@@ -3,6 +3,7 @@ package kz.ikar.almatyinstitutes;
 import android.animation.Animator;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -56,6 +57,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import kz.ikar.almatyinstitutes.db.DBHelper;
@@ -105,6 +107,8 @@ public class MainActivity extends AppCompatActivity{
     private double defLat = 43.271780;
     private double defLng = 76.915002;
 
+    private SharedPreferences sPrefs;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,6 +117,8 @@ public class MainActivity extends AppCompatActivity{
 
         setContentView(R.layout.activity_main);
         mainHandler = new Handler(getMainLooper());
+
+        sPrefs = getPreferences(MODE_PRIVATE);
 
         mapView = (MapView) findViewById(R.id.mapView);
         searchTintView = findViewById(R.id.view_search_tint);
@@ -172,10 +178,10 @@ public class MainActivity extends AppCompatActivity{
         searchAdapter = new SearchInstitutesAdapter(new ArrayList<Institute>(), this);
         searchRecyclerView.setAdapter(searchAdapter);
 
-        Runnable r = new Runnable() {
+        Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                mainHandler.post(startAnimation);
+                //mainHandler.post(startAnimation);
 
                 final List<Institute> institutes = getDataFromLocalDb();
 
@@ -190,9 +196,17 @@ public class MainActivity extends AppCompatActivity{
                     }
                 };
                 mainHandler.post(rbl);
+                final long currentTs = System.currentTimeMillis()/1000;
+                long lastupdate = sPrefs.getLong("LastDBUpdateDate", 0);
+
+                if (currentTs - lastupdate > 604800L) {
+                    mainHandler.post(startAnimation);
+                    updateLocalDb.run();
+                    mainHandler.post(stopAnimation);
+                }
             }
-        };
-        mainHandler.post(r);
+        });
+        thread.run();
 
         /*topInstitutesAdapter = new TopInstitutesAdapter(institutes, this);
         topRecyclerView.setAdapter(topInstitutesAdapter);*/
@@ -288,15 +302,6 @@ public class MainActivity extends AppCompatActivity{
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         initNav();
         FirebaseApp.initializeApp(this);
-
-        new Runnable() {
-            @Override
-            public void run() {
-                mainHandler.post(startAnimation);
-                recreateDb();
-                mainHandler.post(stopAnimation);
-            }
-        }.run();
     }
 
     @Override
@@ -350,6 +355,14 @@ public class MainActivity extends AppCompatActivity{
         handler.obtainMessage();
         mainHandler.post(stopAnimation);
     }
+
+    Runnable updateLocalDb = new Runnable() {
+        @Override
+        public void run() {
+            recreateDb();
+            sPrefs.edit().putLong("LastDBUpdateDate", System.currentTimeMillis()/1000).commit();
+        }
+    };
 
     Runnable stopAnimation = new Runnable(){
         @Override
