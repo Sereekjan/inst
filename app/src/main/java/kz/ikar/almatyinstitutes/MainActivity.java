@@ -109,11 +109,19 @@ public class MainActivity extends AppCompatActivity{
 
     private SharedPreferences sPrefs;
 
+    private List<Institute> list = new ArrayList<>();
+
+    public MyClass myClass;
+    private Retrofit retrofit;
+    private String baseUrl = "https://maps.googleapis.com/maps/api/geocode/";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //recreateDb();
+        recreateDb();
         Mapbox.getInstance(this, getString(R.string.access_token));
+
+        FirebaseApp.initializeApp(this);
 
         setContentView(R.layout.activity_main);
         mainHandler = new Handler(getMainLooper());
@@ -301,7 +309,7 @@ public class MainActivity extends AppCompatActivity{
         });
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         initNav();
-        FirebaseApp.initializeApp(this);
+
     }
 
     @Override
@@ -594,12 +602,7 @@ public class MainActivity extends AppCompatActivity{
         });
     }
 
-    private List<Institute> list = new ArrayList<>();
 
-    public MyClass myClass;
-    private Retrofit retrofit;
-    private Result result;
-    private String baseUrl = "https://maps.googleapis.com/maps/api/geocode/";
 
     private void print(List<Institute> institutes) {
         for (int i = 0; i < institutes.size(); i++) {
@@ -691,7 +694,7 @@ public class MainActivity extends AppCompatActivity{
                 }
                 institute.setType(type);
                 institute.setGov(gov);
-                list.add(institute);
+                //list.add(institute);
             }
         } catch (JSONException e) {
             e.printStackTrace();

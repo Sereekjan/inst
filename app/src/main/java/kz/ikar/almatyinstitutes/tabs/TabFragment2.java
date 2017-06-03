@@ -110,6 +110,14 @@ public class TabFragment2 extends Fragment{
 
     private void refreshRecycler(List<Comment> list){
         commentsAdapter.setItems(list);
+        commentsRecyclerView.setAdapter(commentsAdapter);
+        if (commentsAdapter.getItemCount() == 0) {
+            commentsRecyclerView.setVisibility(View.GONE);
+            emptyView.setVisibility(View.VISIBLE);
+        } else {
+            commentsRecyclerView.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.GONE);
+        }
     }
 
 
@@ -125,7 +133,7 @@ public class TabFragment2 extends Fragment{
 
         final Institute institute = ((AboutActivity)getActivity()).institute;
         List<Comment> comments=((AboutActivity)getActivity()).commentList;
-
+        getInstituteComments(institute.getAddress());
         commentsAdapter = new CommentsAdapter(comments);
         linearLayoutManager = new LinearLayoutManager(getActivity());
         commentsRecyclerView.setLayoutManager(linearLayoutManager);
