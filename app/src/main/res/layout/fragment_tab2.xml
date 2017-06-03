@@ -1,31 +1,33 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="kz.ikar.almatyinstitutes.tabs.TabFragment2">
 
     <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerview_comments"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/recyclerview_comments" />
+        android:layout_height="match_parent" />
+
     <TextView
         android:id="@+id/emptyView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textSize="15dp"
-        android:text="Комментарии отсутствуют"
-        android:gravity="center"/>
-
-    <android.support.design.widget.FloatingActionButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/colorPrimary"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="Комментарии отсутствуют"
+        android:textSize="15dp" />
+
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/floationActBtn"
-        app:fabSize="normal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        app:elevation="4dp"
+        android:backgroundTint="@color/colorPrimary"
+        android:src="@drawable/ic_chat_bubble_white_24dp"
         app:borderWidth="0dp"
-        android:src="@drawable/ic_chat_bubble_white_24dp"/>
+        app:elevation="4dp"
+        app:fabSize="normal" />
 </FrameLayout>

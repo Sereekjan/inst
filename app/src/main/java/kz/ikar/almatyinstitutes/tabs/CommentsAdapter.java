@@ -21,6 +21,9 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
     public CommentsAdapter(List<Comment> mItemList) {
         this.mItemList = mItemList;
     }
+    public void setItems(List<Comment> mItemList){
+        this.mItemList=mItemList;
+    }
 
     @Override
     public CommentsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

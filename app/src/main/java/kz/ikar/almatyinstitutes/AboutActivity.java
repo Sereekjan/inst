@@ -49,7 +49,7 @@ public class AboutActivity extends AppCompatActivity {
         Gson gson = new Gson();
         institute = gson.fromJson(getIntent().getStringExtra("institute"),
                 Institute.class);
-        getInstituteComments(institute.getAddress());
+        //getInstituteComments(institute.getAddress());
         final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
         final PagerAdapter adapter = new PagerAdapter(
                 getSupportFragmentManager(), tabLayout.getTabCount()
@@ -74,28 +74,9 @@ public class AboutActivity extends AppCompatActivity {
 
             }
         });
-    }
-    private void getInstituteComments(final String address) {
-        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-        Query query = reference.child("Institutes");
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    Institute inst = ds.getValue(Institute.class);
-                    if (inst.getAddress().equals(address)) {
-                        commentList=inst.getComments();
 
-                        break;
-                    }
-                }
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -107,4 +88,5 @@ public class AboutActivity extends AppCompatActivity {
 
         return false;
     }
+
 }
