@@ -75,7 +75,7 @@
                                 android:id="@+id/textview_top"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Топ 5 учебных заведений"
+                                android:text="Список учебных заведений"
                                 android:textSize="18sp"
                                 android:gravity="center"
                                 android:padding="8dp"
